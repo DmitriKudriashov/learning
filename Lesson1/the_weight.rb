@@ -18,5 +18,5 @@ end
 if ideal_weigth <= 0 
  	puts " Ваш вес #{ideal_weigth} уже оптимальный !!! "
 else
-    puts " Ваш идеальный вес = #{ideal_weigth} !!! "
+  puts " Ваш идеальный вес = #{ideal_weigth} !!! "
 end

@@ -1,12 +1,9 @@
 # Aria triangle
 print "Сторона треугольника (a) : "
-a = gets.chomp.to_i
+a = gets.to_f
 
 print "Высота треугольника (h) : "
-h = gets.chomp.to_i
+h = gets.to_f
 
-square = a*h/2.0
-puts "Площадь треугольника = " + "#{square}"
-
-
-
+square = a * h / 2
+puts "Площадь треугольника = #{square}"

@@ -1,10 +1,8 @@
 #3. Заполнить массив числами фибоначчи до 100
-	f = [] ; f[0] = 0 ; f[1] = 1 ; f[2] = 1
-	i = 3; a = 2
-	while a < 100
-	  f << a
-  	i += 1
-  	a  = f[ i - 1 ] + f[ i - 2 ]
+	fibbonacci = [ 0, 1, 1 ]
+  element = 2
+	while element < 100
+	  fibbonacci << element
+  	element = fibbonacci[-1] + fibbonacci[-2]
 	end
-
-	puts f
+	puts fibbonacci

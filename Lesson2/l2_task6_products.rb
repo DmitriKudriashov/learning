@@ -9,24 +9,24 @@
 
 =end
 
-  card = {}
- 	loop do
-		 print "Название товара или 'СТОП' для прекращения ввода: "
-		 product = gets.chomp.capitalize!
-		 break if product.nil? || product.upcase == "СТОП"
-		 details = {}
-		 print "кол-во товара: "
-		 details[:quantity] = gets.to_f
-     print "цена за единицу: "
-		 details[:price] = gets.to_f
-		 card[product] = details
-	end
-  total = 0
- 	card.keys.each do |product|
- 		quantity = card[product][:quantity]
- 		price = card[product][:price]
- 		cost = price * quantity
-		puts " #{product}:  колличество: #{quantity}  цена за единицу: #{price} сумма: #{cost}"
-    total += cost
-  end
-  puts " ИТОГО:  #{total} "
+card = {}
+loop do
+  print "Название товара или 'СТОП' для прекращения ввода: "
+  product = gets.chomp.capitalize
+  break if product.nil? || product.upcase == "СТОП"
+  details = {}
+  print "кол-во товара: "
+  details[:quantity] = gets.to_f
+  print "цена за единицу: "
+  details[:price] = gets.to_f
+  card[product] = details
+end
+total = 0
+card.keys.each do |product|
+  quantity = card[product][:quantity]
+  price = card[product][:price]
+  cost = price * quantity
+  puts " #{product}:  колличество: #{quantity}  цена за единицу: #{price} сумма: #{cost}"
+  total += cost
+end
+puts " ИТОГО:  #{total} "

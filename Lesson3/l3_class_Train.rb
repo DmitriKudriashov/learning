@@ -14,142 +14,81 @@
 =end
 
 class Train
+  attr_accessor :number_train, :type_train, :wagons, :speed, :current_number_station, :current_station
+  attr_reader   :route
+
   def initialize(number_train = "Unknow", type_train = "Unknow",  wagons = 0)
-    @train_properties = { number_train: number_train, type_train: type_train, wagons: wagons}
     @number_train = number_train
     @type_train = type_train
-    @quantity_wagons = wagons
+    @wagons = wagons
+    @route = []
     @speed = 0
-    @max_velocity = 100
-    puts_parameters
+    @max_speed = 100 # ограничение возможной скорости. может лучше глобальной сделать?
   end
 
-  def properties
-    @train_properties
+  def set_route=(route_new) # Может принимать маршрут следования (объект класса Route).
+    @route = route_new.route # в объекте класса Route, сам маршрут это метод: route, т.е. собственно массив всех станций
+    self.current_number_station = 0
+    self.current_station = self.route.first
   end
 
-  def speed
-    @speed
-  end
-
-  def number
-    @train_properties[:number_train]
-  end
-
-  def type
-    @train_properties[:type_train]
-  end
-
-  def wagons
-    @train_properties[:wagons]
-  end
-
-  def route
-    @route = @train_properties[:route]
-  end
-
-  def set_route
-    route_new = Route.new
-    route_new.fill
-    @train_properties[:route] = route_new.stations
-    @current_number_station = 0
-    route
-    @current_station = route[@current_number_station]
-  end
-
-  def current_number_station
-    @current_number_station
-  end
-
-
-  def previous_current_next_stations
-    if current_number_station == 0
+  def previous_current_next_stations # Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
+    if self.current_number_station == 0
        " #{current_station} -> #{next_station} "
-    elsif @current_number_station == number_stations
+    elsif self.current_number_station + 1 == quantity_stations
        " #{previous_station} -> #{current_station} "
     else
        " #{previous_station} -> #{current_station} -> #{next_station} "
     end
   end
 
-  def current_station
-    @current_station = route[@current_number_station]
-  end
-
-  def number_stations
+  def quantity_stations
     route.size
   end
 
-  def current_number_station
-    @current_number_station
-  end
-
   def previous_station
-    if current_number_station > 0
-      route[current_number_station - 1]
+    if self.current_number_station > 0
+      route[self.current_number_station - 1]
     else
       current_station # не знаю как тут лучше считать. может пусто поставить?
     end
   end
 
   def next_station
-    if current_number_station < number_stations
-      route[current_number_station + 1]
+    if self.current_number_station < quantity_stations
+      route[self.current_number_station + 1]
     else
       current_station # не знаю как тут лучше считать. может пусто поставить?
     end
   end
 
-  def move_to_next
-    @current_number_station += 1
-    current_station
-  end
-
-  def move_to_previous
-    @current_number_station -= 1
-    current_station
+  #Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
+  def move_to_forward_or_backward(forward_or_backward = true)
+    if forward_or_backward
+      self.current_number_station = self.current_number_station + 1
+    else
+      self.current_number_station = self.current_number_station - 1
+    end
+    @current_station = route[current_number_station]
   end
 
   def puts_parameters
-     "Train number: #{number},  Type: #{type},  quantity wagons: #{wagons}"
+     "Train number: #{number_train},  Type: #{type_train},  quantity wagons: #{wagons}"
   end
 
-  def puts_speed
-     "Current speed: #{speed}"
+  #Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов).
+  def change_wagons(plus_minus_one)
+     self.wagons = self.wagons + plus_minus_one
+     self.wagons = 0 if self.wagons < 0
   end
 
-  def change_wagons(increase)
-    if speed == 0
-     @wagons += increase
-    else
-     puts "Train in motion !"
-    end
+  def change_speed(new_speed) # Может набирать скорость
+    self.speed = new_speed
+    self.speed = 0 if new_speed < 0
+    self.speed = @max_speed if new_speed > @max_speed
   end
 
-  def add_wagon
-    change_wagons(1)
-  end
-
-  def remove_wagon
-    change_wagons(-1)
-  end
-
-  def change_speed(increase)
-    @speed += increase
-    @speed = 0 if @speed < 0
-    @speed = @max_velocity if @speed > @max_velocity
-    puts_speed
-  end
-
-  def add_speed(value)     # хотя скорее всего это лишнее
-    change_speed(value)
-  end
-
-  def reduce_speed(value)  # хотя скорее всего это лишнее
-     change_speed(-value)
-  end
-
-  def stop_train
-    @speed = 0
+  def stop # Может тормозить (сбрасывать скорость до нуля)
+    self.speed = 0
   end
 end

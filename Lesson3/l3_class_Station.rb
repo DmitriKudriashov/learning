@@ -8,37 +8,32 @@
 =end
 
 class Station
-  def initialize(name_station = "City N")
-   @trains = {}  # по условию - нужен поезд,как я понимаю, что это идентификационный номер. и тип поезда. {number_train1 => type_train, number_train2 => type_train, ...}
-   @name_station = name_station
-    puts "Station: #{@name_station} "
+  attr_accessor :name
+  attr_reader :trains
+
+  def initialize(station_name = "City N")
+   # по условию - поезд, как я понимаю: нужен хеш. где номер поезда - ключ, а значение - тип поезда
+   @trains = {}
+   @name = station_name
   end
 
-  def station
-    @station
-  end
-
-  def trains
-    @trains
-  end
-
+  #  Может принимать поезда (по одному за раз)
   def add_train(number_train, type_train)
     @trains[number_train] = type_train
   end
 
+  #  Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).
   def delete_train(number_train)
     @trains.delete(number_train)
   end
 
-  def list_trains
-    @trains.each { |number_train, type_train|  puts "#{number_train}   #{type_train}"}
+  #  Может возвращать список всех поездов на станции, находящиеся в текущий момент
+  def list
+    @trains.each { |number_train, type_train|  puts "Train No: #{number_train}, type:  #{type_train}"}
   end
 
-  def quantty_type_trans(type_train)
-    @trains.values.count(type_train)
-  end
-
-  def train_types_list
-    @trains.invert.each { |type_train, number_train| puts "#{type_train}: #{Station.quantty_type_trans(type_train)}"}
+  #  Может возвращать список поездов на станции по типу (см. ниже): кол-во грузовых, пассажирских
+  def list_quantity_by_type
+    @trains.invert.each { |type_train, number_train| puts "#{type_train}: #{trains.values.count(type_train)}"}
   end
 end

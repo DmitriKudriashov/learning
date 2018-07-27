@@ -7,65 +7,35 @@
   Может выводить список всех станций по-порядку от начальной до конечной
 =end
 class Route
+  attr_accessor :first, :last
+  attr_reader :others, :route
 
   def initialize(first = "Unknow", last = "Unknow")
+    #Имеет начальную и конечную станцию, а также список промежуточных станций.
     @first = first
     @last = last
     @others = []
-    route
+    make_route
   end
 
-  def route
-     @stations = []
-     @stations << @first
-     @stations = @stations + @others
-     @stations << @last
+  def make_route        # строится маршрут
+    @route = []
+    @route << @first
+    @route = @route + @others
+    @route << @last
   end
 
-  def others
-    @others
+  def add(station)  #  Может добавлять промежуточную станцию в список
+    @others << station
+    make_route
   end
 
-  def stations
-    @stations
+  def delete(station) # Может удалять промежуточную станцию из списка
+    @others.delete(station) unless station.empty?
+    make_route
   end
 
-
-  def fill
-    print "First station:"
-    @first = gets.chomp
-    print "Last station: "
-    @last = gets.chomp
-    loop do
-      print "Input name Other station (put Enter or 'STOP' for exit): "
-      new_station = gets.chomp
-      break if new_station.empty? || new_station.upcase == 'STOP'
-      add(new_station)
-    end
-    route
-  end
-
-  def set_first(first_station)
-    @first = first_station
-    route
-  end
-
-  def set_last(last_station)
-    @last = last_station
-    route
-  end
-
-  def add(other_station_name)
-    @others << other_station_name
-    route
-  end
-
-  def delete(name_remove)
-    @others.delete(name_remove) unless name_remove.empty?
-    route
-  end
-
-  def list
-    @stations.each { |name_station| puts "station No #{@stations.index(name_station) + 1}:  #{name_station}" }
+  def list #  Может выводить список всех станций по-порядку от начальной до конечной
+    route.each { |name_station| puts "station No #{route.index(name_station) + 1}:  #{name_station}" }
   end
 end

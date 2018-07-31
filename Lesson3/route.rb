@@ -9,11 +9,7 @@
 class Route
   attr_reader :stations
 
-  #  а тут станции -  это, что? объекты от клааса Station? или все-таки простые строки.
-  #  если считать, что first, last - это объекты класса Station,
-  #  тогда значит прежде, чем задать начальную и конечную станцию ,надо не просто названия городов,
-  #  а типа так: r = Route.new(Stantion.new("first_city"), Stantion.new("last_city"))
-  #  пока это не уточнил, считаю, станции это просто названия! т.е. first, last - строки !
+  #  тут станции -  это класса Station? или все-таки простые строки.
   def initialize(first, last)
   #  Имеет начальную и конечную станцию, а также список промежуточных станций.
     @stations = [first, last]
@@ -27,11 +23,10 @@ class Route
   end
 
   def delete_station(station) # Может удалять промежуточную станцию из списка
-    @stations.delete(station)
+    @stations.delete(station) unless station == first || station == last
   end
 
-  def list # Может выводить список всех станций по-порядку от начальной до конечной
-    # stations.each { |station|  puts "station: #{station.name}" } # случай когда маршрут из объектов
-    stations.each { |station|  puts "station: #{station}" }
+  def list_stations # Может выводить список всех станций по-порядку от начальной до конечной
+    stations.each { |station|  puts "station: #{station.name}" } # случай когда маршрут из объектов
   end
 end

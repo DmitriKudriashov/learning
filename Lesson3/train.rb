@@ -14,8 +14,8 @@
 =end
 
 class Train
-  attr_accessor :current_index
   attr_reader :number, :speed, :type, :route, :wagons,  :current_index # :current_index нужен  для просмотра в irb
+
   def initialize(number, type, wagons)
     @number = number
     @type = type
@@ -29,45 +29,42 @@ class Train
     # При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
     @current_index = 0 #текущий индекс станции в массиве станций маршрута
     route.stations[0].accept_train(self) # на станцию прибыл поезд
-   end
-
-  def set_station(index_station) # вспомогательный метод для определения станции по индексу в массиве
-     @route.stations[index_station] unless index_station.nil?
   end
 
   #  Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
-  def forward_index
-     # @current_index + 1 unless @current_index > route.stations.size - 2
-    @current_index < route.stations.size - 1 ? @current_index + 1 : route.stations.size - 1 # не должен превышать максимальный индекс массива
-    # тоже как тут лучше не знаю.. так или иначе- все должно в дальнейшем коде обрабатываться, где этот ответ будет использоваться
+  def forward_station # возврат след. станции
+    @route.stations[@current_index + 1] unless
   end
 
-  def forward_station
-    set_station(forward_index)
+  def current_station  # возврат текущей станции по ТЗ
+    @route.stations[@current_index]
   end
 
-  def current_station  # метод нужен для контроля текущей станции
-    set_station(@current_index)
-  end
-
-  def backward_index
-    # @current_index - 1 unless @current_index < 1 # может вернуть пусто
-    @current_index > 0 ? @current_index -1 : 0 # чтобы пусто не возвращалось! Хотя точно и не знаю как лучше..все зависит от дальнейшей обработки этой станции!
-  end
-
-  def backward_station
-    set_station(backware_index)
+  def backward_station # возврат предыдущей станции
+    @route.stations[@current_index - 1] unless @current_index < 1
   end
 
   #  Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
   def go_forward
-    @current_index = forward_index
-    current_station
+    if  @current_index < route.stations.size - 2
+      @current_station.send_train(self) # поезд убывает с текущей станции
+      @current_index += 1   # изменяем индекс на следущий
+      @route.stations[@current_index].accept_train(self)
+      @current_station = @route.stations[@current_index] # поставил последней срочкой метода, чтобы метод возвращал  станцию на которую прибыл поезд
+  # else
+  #   @route.stations[@current_index] # current_station # надо чтобы метод вернул текущую станцию
+    end
   end
 
   def go_backward
-    @current_index = backward_index
-    current_station
+    if @current_index > 0
+      @current_station.send_train(self)  # поезд убывает с текущей станции
+      @current_index -= 1    # изменяем индекс на предыдущий
+      @route.stations[@current_index].accept_train(self) #
+      @current_station = @route.stations[@current_index] # поставил последней срочкой метода, чтобы метод возвращал  станцию на которую прибыл поезд
+    #  else
+    #  @route.stations[@current_index] # current_station  # надо чтобы метод вернул текущую станцию
+    end
   end
 
   #  Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов).

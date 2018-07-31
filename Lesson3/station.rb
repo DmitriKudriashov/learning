@@ -26,17 +26,6 @@ class Station
     @trains.delete(train)
   end
 
-  # Может возвращать список поездов на станции по типу (см. ниже): кол-во грузовых, пассажирских
-  def list_by_type # так я и не понял: нужен список по алфавиту типов поездов или не нужен?
-    types = [] # вспомогательный массив, для хранения типов
-    list = {}  # результирующий список
-    trains.each { |train| types << train.type } # надо собрать в одном массиве все существующие типы поездов
-    types.uniq! # оставить только уникальные
-    types.sort! # отсортировать по алфавиту
-    types.each { |type| list[type] = quantuty_trains_by_type(type) }
-    list # хеш где ключ это тип поезда, значения ключа - колл-во поездов этого типа на станции
-  end
-
   def quantuty_trains_by_type(type)
     trains.count { |train| train.type == type }
   end

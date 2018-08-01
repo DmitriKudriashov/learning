@@ -15,6 +15,13 @@ class Route
     @stations = [first, last]
   end
 
+  def first_station
+    @stations.first
+  end
+
+  def last_station
+    @stations.last
+  end
   #  Может добавлять промежуточную станцию в список.
   #  надо из объекта взять имя станции и добавить в массив перед последним элементом
   #  лучше проверить массив на наличие уже этой станции
@@ -23,7 +30,7 @@ class Route
   end
 
   def delete_station(station) # Может удалять промежуточную станцию из списка
-    @stations.delete(station) unless station == first || station == last
+    @stations.delete(station) if station != first_station && station != last_station
   end
 
   def list_stations # Может выводить список всех станций по-порядку от начальной до конечной

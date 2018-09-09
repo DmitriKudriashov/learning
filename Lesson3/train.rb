@@ -46,7 +46,7 @@ class Train
 
   #  Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
   def go_forward
-    if current_station != route.last_station
+    if forward_station #current_station != route.last_station
       current_station.send_train(self)  # поезд убывает с текущей станции
       @current_index += 1   # изменяем индекс на следущий
       current_station.accept_train(self)
@@ -54,7 +54,7 @@ class Train
   end
 
   def go_backward
-    if current_station != route.first_station
+    if backward_station # current_station != route.first_station
       current_station.send_train(self)  # поезд убывает с текущей станции
       @current_index -= 1    # изменяем индекс на предыдущий
       current_station.accept_train(self)

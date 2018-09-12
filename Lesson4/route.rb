@@ -22,11 +22,14 @@ class Route
   end
 
   def add_station(station)
-    @stations.insert(-2, station) unless @stations.include?(station)
+    @stations.insert(-2, station) unless @stations.map(&:name).include?(station.name)
   end
 
   def delete_station(station) # Может удалять промежуточную станцию из списка
-    @stations.delete(station) if station != first_station && station != last_station
+    if station != first_station && station != last_station # здесь можно так оставить, т.к. станция -берется из уже готовотого маршрута
+      @stations.delete(station)
+      true  # метод должен вернуть значение или nil !
+    end
   end
 
   def list_stations # Может выводить список всех станций по-порядку от начальной до конечной

@@ -10,6 +10,7 @@ require_relative 'interface'
 require_relative 'menu_stations'
 require_relative 'menu_trains'
 
-Interface.new
+@menu_main  = Interface.new
+@menu_main.start
 
 

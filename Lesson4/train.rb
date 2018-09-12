@@ -14,7 +14,7 @@
 =end
 
 class Train
-  attr_reader :number, :speed, :route, :wagons, :type
+  attr_reader :number, :speed, :route, :wagons #, :type #пока просто закоменчу
 
   def initialize(number)
     @number = number
@@ -24,10 +24,24 @@ class Train
 
   # Может принимать маршрут следования (объект класса Route).
   def set_route(route)
-    @route = route # в объекте класса Route, сам маршрут это метод: stations, т.е. собственно массив всех станций
+    self.route= route # в объекте класса Route, сам маршрут это метод: stations, т.е. собственно массив всех станций
     # При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
     @current_index = 0 #текущий индекс станции в массиве станций маршрута
     current_station.accept_train(self) unless current_station.nil? # на станцию прибыл поезд
+  end
+
+  def add_wagon(wagon)
+    !wagon.nil? && @speed == 0 && !@wagons.map(&:number).include?(wagon.number)
+  end
+
+  #  Прицепка/отцепка вагонов может осуществляться только если поезд не движется. wagon - object
+  def delete_wagon(wagon)
+    if @speed == 0
+      @wagons.delete(wagon)
+      true
+    else
+      false
+    end
   end
 
   #  Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
@@ -60,26 +74,9 @@ class Train
     end
   end
 
-  #  Прицепка/отцепка вагонов может осуществляться только если поезд не движется. wagon - object
-  def add_wagon(wagon)
+  protected # здесь пока все методы, которые в настоящем проекте явно не требуются.. дальше по ходу будет видно что - куда...
 
-    if !wagon.nil? && @speed == 0 && @type == wagon.type && !@wagons.include?(wagon) # наверное еще нужно ограничение на кол-во всех вагонов знать!
-       @wagons << wagon
-      true
-    else
-     # puts " Speed = #{@speed}; Type: #{@type}; Wagon type: #{wagon.type}; @wagons.include?(wagon) = #{@wagons.include?(wagon)}"  # for debug only
-      false
-    end
-  end
-
-  def delete_wagon(wagon)
-    if @speed == 0
-      @wagons.delete(wagon)
-      true
-    else
-      false
-    end
-  end
+  attr_writer :route
 
   def change_speed(increment) # increment: если  положительный, скорость растет , increment: отрицательный скорость падает
     if @speed + increment > 0
@@ -93,9 +90,5 @@ class Train
   def stop #  Опять не знаю: нужен ли этот стоп ? если в new_speed можно уменьшать скорость?
     @speed = 0
   end
-
-  protected
-
-  attr_writer :type
 
 end

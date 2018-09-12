@@ -1,25 +1,167 @@
-require_relative './base_menu_class'
+require_relative 'base_menu_class'
 
-class Interface < BaseMenuClass
+class Interface < BaseMenu
 
   def initialize
-    super
+    @stations = []
+    @routes = []
+    @trains = []
+    @wagons = []
+  end
+
+  def start
+    primary
+    @station_actions = MenuStations.new(@stations)
+    @trains_actions = MenuTrains.new(@trains, @routes, @wagons)
     run
   end
+
+  def primary # для отладки , чтобы не с нуля заполнять данные
+    s11 = Station.new("NewYork")
+    s12 = Station.new("Orlando")
+    s13 = Station.new("Portlend")
+    s14 = Station.new("Washington")
+    s15 = Station.new("San Diego")
+    s21 = Station.new("Chicago")
+    s22 = Station.new("Detroit")
+    s23 = Station.new("Pittsburg")
+    s24 = Station.new("Atlanta")
+    s25 = Station.new("Dallas")
+    @stations = [s11,s15,s21,s25,s14,s13,s22,s24,s12,s23]
+    # ------------- Routes
+    r1 = Route.new(s11,s25)
+    r1.add_station(s15)
+    r1.add_station(s21)
+
+    r2 = Route.new(s14,s22)
+    r2.add_station(s13)
+    r2.add_station(s24)
+
+    r3 = Route.new(s23,s24)
+    r3.add_station(s12)
+    r3.add_station(s13)
+    r3.add_station(s11)
+
+    r4 = Route.new(s13,s24)
+    r4.add_station(s22)
+    r4.add_station(s23)
+    r4.add_station(s25)
+    r4.add_station(s14)
+
+    @routes = [r1,r3,r2,r4]
+   # ---------------- здесь  p - Passenger, c - Cargo, t - Train
+    pt1 = PassengerTrain.new("P100")
+    pt2 = PassengerTrain.new("P200")
+    pt3 = PassengerTrain.new("P300")
+    pt4 = PassengerTrain.new("P400")
+    pt5 = PassengerTrain.new("P500")
+
+    ct1 = CargoTrain.new("C100")
+    ct2 = CargoTrain.new("C200")
+    ct3 = CargoTrain.new("C300")
+    ct4 = CargoTrain.new("C400")
+    ct5 = CargoTrain.new("C500")
+    @trains = [pt1,pt2,pt3,pt4,pt5,ct1,ct2,ct3,ct4,ct5]
+
+    pt1.set_route(r1)
+    pt2.set_route(r4)
+    pt3.set_route(r2)
+    pt4.set_route(r3)
+
+    ct1.set_route(r2)
+    ct2.set_route(r3)
+    ct3.set_route(r4)
+    ct4.set_route(r1)
+    ct5.set_route(r3)
+
+   #=======================
+
+    cw1 = CargoWagon.new("CW0001")
+    cw2 = CargoWagon.new("CW0002")
+    cw3 = CargoWagon.new("CW0003")
+    cw4 = CargoWagon.new("CW0004")
+    cw5 = CargoWagon.new("CW0005")
+    cw6 = CargoWagon.new("CW0006")
+    cw7 = CargoWagon.new("CW0007")
+    cw8 = CargoWagon.new("CW0008")
+    cw9 = CargoWagon.new("CW0009")
+    cw10 = CargoWagon.new("CW0010")
+    cw11 = CargoWagon.new("CW0011")
+    cw12 = CargoWagon.new("CW0012")
+    cw13 = CargoWagon.new("CW0013")
+    cw14 = CargoWagon.new("CW0014")
+    cw15 = CargoWagon.new("CW0015")
+    cw16 = CargoWagon.new("CW0016")
+    cw17 = CargoWagon.new("CW0017")
+    cw18 = CargoWagon.new("CW0018")
+    cw19 = CargoWagon.new("CW0019")
+    cw20 = CargoWagon.new("CW0020")
+
+    pw1 = PassengerWagon.new("PW0001")
+    pw2 = PassengerWagon.new("PW0002")
+    pw3 = PassengerWagon.new("PW0003")
+    pw4 = PassengerWagon.new("PW0004")
+    pw5 = PassengerWagon.new("PW0005")
+    pw6 = PassengerWagon.new("PW0006")
+    pw7 = PassengerWagon.new("PW0007")
+    pw8 = PassengerWagon.new("PW0008")
+    pw9 = PassengerWagon.new("PW0009")
+    pw10 = PassengerWagon.new("PW0010")
+    pw11 = PassengerWagon.new("PW0011")
+    pw12 = PassengerWagon.new("PW0012")
+    pw13 = PassengerWagon.new("PW0013")
+    pw14 = PassengerWagon.new("PW0014")
+    pw15 = PassengerWagon.new("PW0015")
+    pw16 = PassengerWagon.new("PW0016")
+    pw17 = PassengerWagon.new("PW0017")
+
+    @wagons = [cw1, cw2, cw3,  cw4, cw5, cw6, cw7, cw8, cw9, cw10, cw10, cw11, cw12, cw13, cw14, cw15, cw16, cw17, cw18, cw19, cw20, pw1, pw2, pw3, pw4, pw5, pw6, pw7, pw8, pw9, pw10, pw11, pw12, pw13, pw14, pw15, pw16, pw17]
+
+    ct1.add_wagon(cw1)
+    ct1.add_wagon(cw3)
+    ct1.add_wagon(cw5)
+    ct1.add_wagon(cw7)
+    ct1.add_wagon(cw9)
+
+    ct2.add_wagon(cw2)
+    ct2.add_wagon(cw4)
+    ct2.add_wagon(cw6)
+    ct2.add_wagon(cw8)
+    ct2.add_wagon(cw10)
+
+    ct3.add_wagon(cw11)
+    ct3.add_wagon(cw12)
+    ct3.add_wagon(cw13)
+
+    pt1.add_wagon(pw1)
+    pt1.add_wagon(pw3)
+    pt1.add_wagon(pw5)
+
+    pt2.add_wagon(pw7)
+    pt2.add_wagon(pw9)
+
+    pt3.add_wagon(pw2)
+    pt3.add_wagon(pw4)
+    pt3.add_wagon(pw6)
+
+    pt4.add_wagon(pw8)
+    pt4.add_wagon(pw10)
+
+   end
 
   def run
     loop do
       system('clear')
-      puts "======= MAIN MENU ========="
+      puts "======= MAIN MENU ========= "
       puts "1 - Stations"       #- Создавать станции
       puts "2 - Trains"         #- Создавать поезда
       puts "3 - Routes" #- Создавать маршруты и управлять станциями в нем (добавлять, удалять)
       puts "(Input Number for action or <Enter> key - EXIT ! ) "
       case gets.to_i
       when 1
-        MenuStations.new(@stations)
+        @station_actions.station_menu
       when 2
-        MenuTrains.new(@trains, @routes, @wagons) # menu_trains
+        @trains_actions.train_menu
       when 3
         menu_routes
       else
@@ -29,32 +171,28 @@ class Interface < BaseMenuClass
     system('clear')
   end
 
-  def make_array_names(array_objects) # создать массив названий из объектов, имеющих свойство name
-    names = []
-    array_objects.each { |s| names << s.name}
-    names
-  end
+  protected
 
   def menu_routes
     loop do
       system("clear")
-      puts "--     ROUTES MENU    --"
+      puts "--     ROUTES MENU    --- #{message_return}"
       puts "1 - Create New Route"       #- Создавать маршрут
       puts "2 - List Routes "  #- Просматривать список маршрутов
       puts "3 - Add Station" #- добавить станцию
       puts "4 - Remove Station" #- удалить станцию
-      #puts "(press Number for action, any other key - RETURN to MAIN MENU !  "
       case gets.to_i
         when 1
           create_new_route
         when 2
-          list_routes
+          list_routes(@routes)
+          gets # pause
         when 3
-          route_add_station
+          menu_for_select_route_and_station("===============> Add Station to Route =========== ", @routes, @stations, true )
         when 4
-          route_remove_station
+          menu_for_select_route_and_station("===============> Remove Station from Route =========== ", @routes, @stations, false )
         else
-          break if condition_for_return_previous_menu
+          break
       end
     end #loop
   end
@@ -63,58 +201,70 @@ class Interface < BaseMenuClass
     loop do
       system("clear")
       puts "- - - Create New Route - - - "
-      names_list(@stations) # array_items_menu - тут используется массив объектов станций
+      names_list!(@stations) # array_items_menu - тут используется массив объектов станций
       puts "1) Select number item from list for First station of Route: "
       selected_number_first = gets.to_i - 1
-      break if (selected_number_first < 0 || selected_number_first > @stations.size - 1 )
+      break if (selected_number_first < 0 || selected_number_first > @stations.size - 1)
       first_station = @stations[selected_number_first]
       puts "====>> Fist station of route: #{first_station.name}"
-      names_list(@stations) # array_items_menu - тут используется массив объектов станций
+      names_list!(@stations) # array_items_menu - тут используется массив объектов станций
       puts "2) Select number item from list for Last station of Route: "
       selected_number_last = gets.to_i - 1
       break if (selected_number_last < 0 || selected_number_last > @stations.size - 1)
       last_station = @stations[selected_number_last]
       puts "====>> Last station of route: #{last_station.name}"
       new_route = Route.new(first_station, last_station)
-      @routes << new_route unless @routes.include?(new_route)
+      new_route_string = "Route: #{first_station.name} -> #{last_station.name}"
+      if create_routes_as_string(@routes).include?(convert_route_to_string(new_route))
+        puts "This Route: #{new_route_string} Already Exist!"
+      else
+        @routes << new_route
+        puts "This Route: #{new_route_string} Successfully Added to the Routes List!"
+      end
+        gets #pause
     end # loop
   end
 
-
-
-  def route_add_station
-    system("clear")
-    puts "========> Add Station to Route:"
-    puts " !!!!!!!!!!!!! ON REPAIR !!!!!!!!!!!!!!!!!! "
-    gets
+  def menu_for_select_route_and_station(name_menu, routes, stations, action_add_station)
+   system("clear")
+   puts name_menu unless name_menu.empty?
+   loop do
+      only_routes(routes)
+      index_route = gets.to_i - 1 # first select: select route
+      break if index_route < 0 || index_route > routes.size - 1
+      route = routes[index_route]
+      route_as_string = convert_route_to_string(route)
+      puts "====>> Selected Route: #{route_as_string} ! "
+      puts "Select station for action: \  #{message_return} "
+      if action_add_station
+        stations_for_selected =  @stations - route.stations
+        names_list!(stations_for_selected)  # secondary select: select station
+      else
+        stations_for_selected =  route.stations
+        names_list(stations_for_selected)  # secondary select: select station
+    end
+      index_station = gets.to_i - 1
+      break if index_station < 0 || index_station > stations_for_selected.size - 1
+      current_station = stations_for_selected[index_station]
+      puts "=====>> Selected station: #{current_station.name}"
+      if action_add_station
+        if route.add_station(stations_for_selected[index_station]).nil?
+          puts " The station: #{current_station.name} NOT added to the Route:  #{route_as_string} !!! "
+        else
+          puts "To the Route: #{route_as_string} added  station: #{current_station.name} --> Successfully !"
+          puts "New Route: #{convert_route_to_string(routes[index_route])}"
+        end
+      else
+        if route.delete_station(current_station).nil?
+          puts "The station: #{current_station.name} NOT removed from Route: #{route_as_string}"
+        else
+          puts "The station: #{current_station.name} Successfully removed from Route: #{route_as_string}"
+          puts "New Route: #{convert_route_to_string(routes[index_route])}"
+        end
+      end
+      gets # pause
+    end #loop do
   end
 
-  def route_remove_station
-    system("clear")
-    puts "========> Remove Station from set_route:"
-    puts " !!!!!!!!!!!!! ON REPAIR !!!!!!!!!!!!!!!!!! "
-    gets
-  end
-
-  protected
-
-  def condition_for_return_previous_menu
-    puts "Return to the previous menu? (Y or N): "
-    gets.chomp.upcase.include?("Y")
-  end
 end # class Interface
-
-=begin
-
-
-      puts "1 - Creating New Station"       #- Создавать станции
-      puts "2 - Creating New Train"         #- Создавать поезда
-      puts "3 - Creating New Routes And Managemets Routes " #- Создавать маршруты и управлять станциями в нем (добавлять, удалять)
-      puts "4 - Set Route to Train" #- Назначать маршрут поезду
-      puts "5 - Added new wagons to Train" #- Добавлять вагоны к поезду
-      puts "6 - Remove wagons from Train" #- Отцеплять вагоны от поезда
-      puts "7 - Move Traine by Route" #- Перемещать поезд по маршруту вперед и назад
-      puts "8 - List Stations and Trains " #- Просматривать список станций и список поездов на станции"
-
-=end
 

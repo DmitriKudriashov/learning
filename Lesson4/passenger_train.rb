@@ -3,10 +3,12 @@ class PassengerTrain < Train
 
   def initialize(number)
     super
-    @type = type=("Passenger")
+    @type = "Passenger"
+    @number = number
   end
 
-  protected
-  attr_writer :type
+  def add_wagon(wagon)
+    @wagons << wagon if super && @type == wagon.type
+  end
 
 end

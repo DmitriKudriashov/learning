@@ -18,7 +18,7 @@ class Station
 
   #  Может принимать поезда (по одному за раз)
   def accept_train(train)
-    @trains << train unless trains.include?(train)
+    @trains << train unless @trains.map(&:number).include?(train.number)
   end
 
   #  Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).

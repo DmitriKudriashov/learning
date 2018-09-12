@@ -1,133 +1,136 @@
-class BaseMenuClass
-
-  def initialize
-    @stations = []
-    @routes = []
-    @trains = []
-    @route_stations = [] # будет содержать маршруты в виде строк из названий станций
-    @wagons = []
-    puts "++++++++++++== >>>>>> BaseMenuClass !!!!!!! "
-    primary
-  end
-
-  def primary # для отладки , чтобы не с нуля заполнять данные
-    s11 = Station.new("NewYork")
-    s12 = Station.new("Orlando")
-    s13 = Station.new("Portlend")
-    s14 = Station.new("Washington")
-    s15 = Station.new("San Diego")
-    s21 = Station.new("Chicago")
-    s22 = Station.new("Detroit")
-    s23 = Station.new("Pittsburg")
-    s24 = Station.new("Atlanta")
-    s25 = Station.new("Dallas")
-    @stations = [s11,s15,s21,s25,s14,s13,s22,s24,s12,s23]
-    # ------------- Routes
-    r1 = Route.new(s11,s25)
-    r1.add_station(s15)
-    r1.add_station(s21)
-
-    r2 = Route.new(s14,s22)
-    r2.add_station(s13)
-    r2.add_station(s24)
-
-    r3 = Route.new(s23,s24)
-    r3.add_station(s12)
-    r3.add_station(s13)
-    r3.add_station(s11)
-
-    r4 = Route.new(s13,s24)
-    r4.add_station(s22)
-    r4.add_station(s23)
-    r4.add_station(s25)
-    r4.add_station(s14)
-    @routes = [r1,r3,r2,r4]
-
-   end
+class BaseMenu
 
   def make_array_numbers(array_objects) # создать массив названий из объектов, имеющих свойство number
-    numbers = []
-    array_objects.each { |s| numbers << s.number}
-    numbers
+    numbers = array_objects.map(&:number)
+  end
+
+  def make_array_names(array_objects) # создать массив названий из объектов, имеющих свойство name !
+   array_objects.map(&:name) # да! прикольно!
   end
 
   def sort_array_objects_by_name(array_objects)
-     array_objects.sort! { |a,b| a.name <=> b.name }# отсортировать по именам станции для дальнейшего использования в списке
+     array_objects.sort! { |a,b| a.name <=> b.name }  unless array_objects.empty?# отсортировать по именам станции для дальнейшего использования в списке
   end
 
   def select_from_names(name_menu, array_items_menu)
     system("clear")
     puts name_menu
-    names_list(array_items_menu) # array_items_menu - тут используется массив объектов станций
-    selected_number = gets.to_i
+    names_list!(array_items_menu) # array_items_menu - тут используется массив объектов станций
+    gets.to_i
   end
 
   def sort_array_objects_by_number(array_objects)
-    array_objects.sort! { |a,b| a.number <=> b.number } # отсортировать по номерам поезда для дальнейшего использования в списке
+    if array_objects.empty?
+      message_list_is_empty
+    else
+      array_objects.sort! { |a,b| a.number <=> b.number }  # отсортировать по номерам поезда для дальнейшего использования в списке
+    end
   end
 
   def sort_array_objects_by_type(array_objects)
-    array_objects.sort! { |a,b| a.type <=> b.type } # отсортировать по номерам поезда для дальнейшего использования в списке
+    if array_objects.empty?
+      message_list_is_empty
+    else
+      array_objects.sort! { |a,b| a.type <=> b.type }  unless array_objects.empty? # отсортировать по типам поезда для дальнейшего использования в списке
+    end
   end
 
-  def numbers_objects_list(array_objects)
-    sort_array_objects_by_number(array_objects)
-    indx = 0
-    array_objects.each do |t|
-      indx += 1
-      puts "#{indx}. #{t.number}  #{t.type}"
+  def numbers_objects_list(array_objects) # для объекто имеющих свойства: number и type
+    unless array_objects.empty?
+      sort_array_objects_by_number(array_objects)
+      indx = 0
+      array_objects.each do |t|
+        indx += 1
+        puts "#{indx}. #{t.number}  #{t.type}"
+      end
+    else
+      message_list_is_empty
+    end
+  end
+
+  def names_list!(array_objects) # array_objects - objects must be have unique atribute: name
+   if array_objects.nil?
+      message_list_is_empty
+   else
+      array_objects.sort! { |a,b| a.name <=> b.name }
+      array_objects_list(array_objects)
     end
   end
 
   def names_list(array_objects) # array_objects - objects must be have unique atribute: name
+   if array_objects.nil?
+      message_list_is_empty
+   else
+      array_objects.sort { |a,b| a.name <=> b.name }
+      array_objects_list(array_objects)
+    end
+  end
+
+  def array_objects_list(array_objects)
     indx = 0
-    array_objects.sort! { |a,b| a.name <=> b.name }
     array_objects.each do  |object|
       indx += 1
       puts "#{indx}. #{object.name}"
     end
   end
 
+  def message_list_is_empty
+    puts "List is EMPTY!"
+  end
+
   def list_all_numbers(name_menu, array_objects)
-   if array_objects.nil? # || array_objects.size == 0
-      puts "List is EMPTY!"
+   if array_objects.nil?
+      message_list_is_empty
    else
       puts name_menu #
-      sort_array_objects_by_number(array_objects)
       numbers_objects_list(array_objects)
       puts "======================"
     end
       gets # pause
   end
 
-  def message_return
-    "(Select Number or <EnterKey>  for RETURN ) "
-  end
-
-  def condition_for_return_previous_menu
-    puts "Return to the previous menu? (Y or N): "
-    gets.chomp.upcase.include?("Y")
-  end
-
-  def create_routes_as_string
-    @route_stations = [] # массив маршрутов, каждый из которых это строка из названий станций
-    @routes.each do |r|
-      stations_names = []
-      r.stations.each { |s| stations_names << s.name }
-      @route_stations << stations_names * "; "
+  def create_routes_as_string(routes)
+    routes_stations = [] # массив маршрутов, каждый из которых это строка из названий станций
+    routes.each do |route|
+      routes_stations <<  convert_route_to_string(route)
     end
+    routes_stations
   end
 
-  def list_routes
+  def convert_route_to_string(route)
+     (route.stations.map(&:name) * "; ").upcase
+  end
+
+  def list_routes(routes)
     system("clear")
-    puts "- - - - List Routes - - - - \n" + message_return
-    create_routes_as_string
-    indx = 0
-    @route_stations.each do |r|
-      indx += 1
-      print "#{indx}. #{r} \n"
-    end
-    number_route = gets.to_i
+    only_routes(routes)
   end
 
+  def only_routes(routes) # возвращает список маршрутов в виде строк!
+    puts "- - - - List Routes - - - -   #{message_return} "
+    route_stations = create_routes_as_string(routes)
+    indx = 0
+    route_stations.each do |r|
+      indx += 1
+      puts "#{indx}. #{r}"
+    end
+  end
+
+  def menu_for_select_train_and_route(name_menu, array_objects, routes)
+    # used only for array_objects = @trains ! наверное следует тут упростить, или усложнить для более широкого применения в других случаях...не знаю..
+   loop do
+      selected_number =  selected_from_numbers(name_menu, array_objects) - 1 # first select: select train
+      break if selected_number < 0 || selected_number > array_objects.size - 1
+      list_routes(routes)      # secondary select: select route
+      index_route = gets.to_i- 1
+      break if index_route < 0 || index_route > routes.size - 1
+      array_objects[selected_number].set_route(routes[index_route]) # назначение маршрута поезду
+      puts "To the Train: #{array_objects[selected_number].number} set route: #{create_routes_as_string(routes)[index_route]}"
+      gets # pause
+    end #loop do
+  end
+
+  def message_return
+    "\n (Select Number or <EnterKey>  for RETURN )"
+  end
 end

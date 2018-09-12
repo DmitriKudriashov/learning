@@ -4,12 +4,10 @@ class CargoTrain < Train
   def initialize(number)
     super
     @type = "Cargo"
-    @number = number
   end
 
   def add_wagon(wagon)
     @wagons << wagon if super && @type == wagon.type
   end
-
 
 end

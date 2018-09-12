@@ -1,13 +1,9 @@
 class PassengerWagon < Wagon
-  attr_reader :number, :type
+  attr_reader :type
 
   def initialize(number)
-    self.type= "Passenger"
-    self.number= number
+    @type = "Passenger"
+    super
   end
-
-  protected
-
-  attr_writer :number, :type
 
 end

@@ -2,10 +2,9 @@ class Wagon
   attr_reader :number
 
   def initialize(number)
-    number= number
+    @number = number
   end
 
-  private
+  protected
   attr_writer :number
-
 end

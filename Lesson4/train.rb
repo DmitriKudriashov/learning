@@ -76,7 +76,7 @@ class Train
 
   protected # здесь пока все методы, которые в настоящем проекте явно не требуются.. дальше по ходу будет видно что - куда...
 
-  attr_writer :route
+  attr_writer :number, :speed, :route, :wagons # может пригодятся
 
   def change_speed(increment) # increment: если  положительный, скорость растет , increment: отрицательный скорость падает
     if @speed + increment > 0

@@ -63,7 +63,7 @@ class MenuTrains <  BaseMenu
         item = gets.to_i
         case item
         when 1
-          wagon = create_wagon(@train_type)
+          create_wagon(@train_type)
         when 2
           add_wagon_to_train(@train_current)
         when 3
@@ -199,7 +199,7 @@ class MenuTrains <  BaseMenu
       numbers_objects_list(train_object.wagons)
       item_number = gets.to_i - 1
       break if item_number < 0 || item_number > train_object.wagons.size - 1
-      if train_object.delete_wagon(train_object.wagons[item_number])
+      unless train_object.delete_wagon(train_object.wagons[item_number]).nil?
         puts "This Wagon: #{train_object.wagons[item_number]} Removed Successfully from Train: #{train_object.number} \n Press <Enter> ..."
         gets # pause for look
       end

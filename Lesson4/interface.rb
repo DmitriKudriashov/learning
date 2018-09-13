@@ -200,10 +200,10 @@ class Interface < BaseMenu
     loop do
       system("clear")
       puts "- - - Create New Route - - - "
-      first_station = select_station("1) Select number item from list for First station of Route:")
+      first_station = select_station_new_route("1) Select number item from list for First station of Route:")
       break if first_station.to_s.strip.empty?
       puts "====>> Fist station of route: #{first_station.name}"
-      last_station = select_station("2) Select number item from list for Last station of Route:")
+      last_station = select_station_new_route("2) Select number item from list for Last station of Route:")
       break if last_station.to_s.strip.empty?
       puts "====>> Last station of route: #{last_station.name}"
       new_route = Route.new(first_station, last_station)
@@ -222,7 +222,7 @@ class Interface < BaseMenu
     end
   end
 
-  def select_station(message)
+  def select_station_new_route(message)
     names_list!(@stations)
     puts message
     indx = gets.to_i - 1
@@ -260,7 +260,7 @@ class Interface < BaseMenu
       puts "=====>> Selected station: #{current_station.name}"
       if action_add_station # добавление станции к маршруту
         if routes[index_route].add_station(current_station).nil?
-          puts " The station: #{current_station.name} NOT added to the Route: #{route_as_string} !!! "
+          puts " The station: #{current_station.name} NOT Added to the Route: #{route_as_string} !!! "
         else
           puts "To the Route: #{route_as_string} added  station: #{current_station.name} --> Successfully !"
           puts "New Route: #{convert_route_to_string(routes[index_route])}" # route after add new station

@@ -32,17 +32,12 @@ class Train
   end
 
   def add_wagon(wagon)
-    @wagons << wagon if !wagon.nil? && @speed == 0 && !@wagons.map(&:number).include?(wagon.number) && self.type == wagon.type
+    @wagons << wagon if !wagon.nil? && @speed == 0 && !@wagons.map(&:number).include?(wagon.number)
   end
 
   #  Прицепка/отцепка вагонов может осуществляться только если поезд не движется. wagon - object
   def delete_wagon(wagon)
-    if @speed == 0
-      @wagons.delete(wagon)
-      true
-    else
-      false
-    end
+    @wagons.delete(wagon) if @speed == 0
   end
 
   #  Возвращать предыдущую станцию, текущую, следующую, на основе маршрута

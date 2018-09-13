@@ -5,6 +5,6 @@ class PassengerTrain < Train
   end
 
   def add_wagon(wagon)
-    super
+    super if wagon.type == "Passenger"
   end
 end

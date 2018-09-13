@@ -1,4 +1,4 @@
-require_relative 'base_menu_class'
+require_relative 'base_menu'
 
 class Interface < BaseMenu
 
@@ -146,8 +146,7 @@ class Interface < BaseMenu
 
     pt4.add_wagon(pw8)
     pt4.add_wagon(pw10)
-
-   end
+  end
 
   def run
     loop do
@@ -182,17 +181,17 @@ class Interface < BaseMenu
       puts "3 - Add Station" #- добавить станцию
       puts "4 - Remove Station" #- удалить станцию
       case gets.to_i
-        when 1
-          create_new_route
-        when 2
-          list_routes(@routes)
-          gets # pause
-        when 3
-          menu_for_select_route_and_station("===============> Add Station to Route =========== ", @routes, @stations, true )
-        when 4
-          menu_for_select_route_and_station("===============> Remove Station from Route =========== ", @routes, @stations, false )
-        else
-          break
+      when 1
+        create_new_route
+      when 2
+        list_routes(@routes)
+        gets # pause
+      when 3
+        menu_for_select_route_and_station("===============> Add Station to Route =========== ", @routes, @stations, true )
+      when 4
+        menu_for_select_route_and_station("===============> Remove Station from Route =========== ", @routes, @stations, false )
+      else
+        break
       end
     end #loop
   end
@@ -201,70 +200,80 @@ class Interface < BaseMenu
     loop do
       system("clear")
       puts "- - - Create New Route - - - "
-      names_list!(@stations) # array_items_menu - тут используется массив объектов станций
-      puts "1) Select number item from list for First station of Route: "
-      selected_number_first = gets.to_i - 1
-      break if (selected_number_first < 0 || selected_number_first > @stations.size - 1)
-      first_station = @stations[selected_number_first]
+      first_station = select_station("1) Select number item from list for First station of Route:")
+      break if first_station.to_s.strip.empty?
       puts "====>> Fist station of route: #{first_station.name}"
-      names_list!(@stations) # array_items_menu - тут используется массив объектов станций
-      puts "2) Select number item from list for Last station of Route: "
-      selected_number_last = gets.to_i - 1
-      break if (selected_number_last < 0 || selected_number_last > @stations.size - 1)
-      last_station = @stations[selected_number_last]
+      last_station = select_station("2) Select number item from list for Last station of Route:")
+      break if last_station.to_s.strip.empty?
       puts "====>> Last station of route: #{last_station.name}"
       new_route = Route.new(first_station, last_station)
-      new_route_string = "Route: #{first_station.name} -> #{last_station.name}"
-      if create_routes_as_string(@routes).include?(convert_route_to_string(new_route))
-        puts "This Route: #{new_route_string} Already Exist!"
-      else
-        @routes << new_route
-        puts "This Route: #{new_route_string} Successfully Added to the Routes List!"
-      end
-        gets #pause
+      new_route_check_add_to_all(new_route, first_station.name, last_station.name)
+      gets #pause
     end # loop
   end
 
-  def menu_for_select_route_and_station(name_menu, routes, stations, action_add_station)
-   system("clear")
-   puts name_menu unless name_menu.empty?
-   loop do
-      only_routes(routes)
-      index_route = gets.to_i - 1 # first select: select route
-      break if index_route < 0 || index_route > routes.size - 1
-      route = routes[index_route]
-      route_as_string = convert_route_to_string(route)
-      puts "====>> Selected Route: #{route_as_string} ! "
-      puts "Select station for action: \  #{message_return} "
-      if action_add_station
-        stations_for_selected =  @stations - route.stations
-        names_list!(stations_for_selected)  # secondary select: select station
-      else
-        stations_for_selected =  route.stations
-        names_list(stations_for_selected)  # secondary select: select station
+  def new_route_check_add_to_all(new_route, first_name, last_name )
+    new_route_string = "Route: #{first_name} -> #{last_name}"
+    if create_routes_as_string(@routes).include?(convert_route_to_string(new_route)) # проверить существование маршрута
+      puts "This Route: #{new_route_string} Already Exist!"
+    else
+      @routes << new_route
+      puts "This Route: #{new_route_string} Successfully Added to the Routes List!"
     end
-      index_station = gets.to_i - 1
-      break if index_station < 0 || index_station > stations_for_selected.size - 1
-      current_station = stations_for_selected[index_station]
+  end
+
+  def select_station(message)
+    names_list!(@stations)
+    puts message
+    indx = gets.to_i - 1
+    @stations[indx] if -1 < indx and indx < @stations.size
+  end
+
+  def select_index_route(routes)
+    only_routes(routes)
+    gets.to_i - 1
+  end
+
+  def select_station(stations, route, action_add_station )
+    puts "Select station for action: \ #{message_return} "
+    if action_add_station # case add station to route
+      stations_for_selected =  stations - route.stations
+      names_list!(stations_for_selected)  # secondary select: select station
+    else # case remove station from route
+      stations_for_selected =  route.stations
+      names_list(stations_for_selected)  # secondary select: select station
+    end
+    index_station = gets.to_i - 1
+    stations_for_selected[index_station] if -1 < index_station && index_station < stations_for_selected.size
+  end
+
+  def menu_for_select_route_and_station(name_menu, routes, stations, action_add_station) # сделать проще !
+    system("clear")
+    puts name_menu unless name_menu.empty?
+    loop do
+      index_route = select_index_route(routes)
+      break unless -1 < index_route && index_route < routes.size
+      route_as_string = convert_route_to_string(routes[index_route])
+      puts "====>> Selected Route: #{route_as_string} ! "
+      current_station = select_station(@stations, routes[index_route], action_add_station)
+      break if current_station.nil?
       puts "=====>> Selected station: #{current_station.name}"
-      if action_add_station
-        if route.add_station(stations_for_selected[index_station]).nil?
-          puts " The station: #{current_station.name} NOT added to the Route:  #{route_as_string} !!! "
+      if action_add_station # добавление станции к маршруту
+        if routes[index_route].add_station(current_station).nil?
+          puts " The station: #{current_station.name} NOT added to the Route: #{route_as_string} !!! "
         else
           puts "To the Route: #{route_as_string} added  station: #{current_station.name} --> Successfully !"
-          puts "New Route: #{convert_route_to_string(routes[index_route])}"
+          puts "New Route: #{convert_route_to_string(routes[index_route])}" # route after add new station
         end
-      else
-        if route.delete_station(current_station).nil?
+      else # удаление станции из маршрута
+        if routes[index_route].delete_station(current_station).nil?
           puts "The station: #{current_station.name} NOT removed from Route: #{route_as_string}"
         else
           puts "The station: #{current_station.name} Successfully removed from Route: #{route_as_string}"
-          puts "New Route: #{convert_route_to_string(routes[index_route])}"
+          puts "New Route: #{convert_route_to_string(routes[index_route])}" # route after deleted
         end
       end
       gets # pause
     end #loop do
   end
-
 end # class Interface
-

@@ -14,10 +14,11 @@
 =end
 
 class Train
-  attr_reader :number, :speed, :route, :wagons #, :type #пока просто закоменчу
+  attr_reader :number, :speed, :route, :wagons, :type
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
+    @type = type
     @wagons = [] # массив вагонов-объектов
     @speed = 0
   end
@@ -31,7 +32,7 @@ class Train
   end
 
   def add_wagon(wagon)
-    !wagon.nil? && @speed == 0 && !@wagons.map(&:number).include?(wagon.number)
+    @wagons << wagon if !wagon.nil? && @speed == 0 && !@wagons.map(&:number).include?(wagon.number) && self.type == wagon.type
   end
 
   #  Прицепка/отцепка вагонов может осуществляться только если поезд не движется. wagon - object
@@ -90,5 +91,4 @@ class Train
   def stop #  Опять не знаю: нужен ли этот стоп ? если в new_speed можно уменьшать скорость?
     @speed = 0
   end
-
 end

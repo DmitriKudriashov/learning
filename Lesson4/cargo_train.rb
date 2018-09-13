@@ -1,13 +1,10 @@
 class CargoTrain < Train
-  attr_reader :type
 
   def initialize(number)
-    super
-    @type = "Cargo"
+    super(number, "Cargo")
   end
 
   def add_wagon(wagon)
-    @wagons << wagon if super && @type == wagon.type
+    super
   end
-
 end

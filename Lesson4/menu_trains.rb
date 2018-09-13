@@ -1,12 +1,12 @@
 class MenuTrains <  BaseMenu
 
- def initialize(trains, routes, wagons)
+  def initialize(trains, routes, wagons)
     @trains = trains
     @routes = routes
     @wagons = wagons
     @wagons_used = []
     @wagons_unused = []
- end
+  end
 
   def train_menu
     loop do
@@ -21,25 +21,25 @@ class MenuTrains <  BaseMenu
       puts "6 - List Wagons All"
       puts "7 - List Used/Unused Wagons"
       case gets.to_i
-        when 1
-          create_new_train("Cargo")
-        when 2
-          create_new_train("Passenger")
-        when 3
-          list_trains
-        when 4
-          set_route_to_train
-        when 5
-          add_remove_wagon_to_tran
-        when 6
-          list_all_numbers("===== List all Wagons:", @wagons)
-        when 7
-          all_unused_wagons
-          list_all_numbers("===== List Used Wagons:", @wagons_used)
-          list_all_numbers("===== List Unused Wagons:", @wagons_unused)
-        else
-           break
-        end
+      when 1
+        create_new_train("Cargo")
+      when 2
+        create_new_train("Passenger")
+      when 3
+        list_trains
+      when 4
+        set_route_to_train
+      when 5
+        add_remove_wagon_to_tran
+      when 6
+        list_all_numbers("===== List all Wagons:", @wagons)
+      when 7
+        all_unused_wagons
+        list_all_numbers("===== List Used Wagons:", @wagons_used)
+        list_all_numbers("===== List Unused Wagons:", @wagons_unused)
+      else
+        break
+      end # case
     end # loop
   end
 
@@ -60,47 +60,46 @@ class MenuTrains <  BaseMenu
         puts "5 - Current Station "
         puts "6 - Move Train To forvard Station"
         puts "7 - Move Train To backward Station"
-       item = gets.to_i
+        item = gets.to_i
         case item
-          when 1
-            wagon = create_wagon(@train_type)
-          when 2
-            add_wagon_to_train(@train_current)
-          when 3
-            remove_wagon_from_train(@train_current)
-          when 4
-            numbers_objects_list(@train_current.wagons)
-            gets # pause
-          when 5
-            current_station(@train_current)
-          when 6
-            move_forward(@train_current)
-          when 7
-            move_backward(@train_current)
-          else
-            break
-        end
+        when 1
+          wagon = create_wagon(@train_type)
+        when 2
+          add_wagon_to_train(@train_current)
+        when 3
+          remove_wagon_from_train(@train_current)
+        when 4
+          numbers_objects_list(@train_current.wagons)
+          gets # pause
+        when 5
+          current_station(@train_current)
+        when 6
+          move_forward(@train_current)
+        when 7
+          move_backward(@train_current)
+        else
+          break
+        end # case
       end
     end
   end
 
   def current_station(train)
-   puts "Trains current station: #{train.current_station.name}"
+   puts "Train current station: #{train.current_station.name}"
    gets
   end
 
   def move_forward(train)
-    puts "Trains forward station: #{train.forward_station.name}\n go....."
+    puts "Train forward from #{train.current_station.name} to the station: #{train.forward_station.name}\n go....."
     train.go_forward
     current_station(train)
   end
 
   def move_backward(train)
-    puts "Trains backward station: #{train.backward_station.name}\n go...."
+    puts "Train backward from #{train.current_station.name} to the station: #{train.backward_station.name}\n go...."
     train.go_backward
     current_station(train)
   end
-
 
   def create_wagon(type)
     count_loop = 0
@@ -153,7 +152,7 @@ class MenuTrains <  BaseMenu
         @trains << new_train
       end
     end # loop
- end
+  end
 
   def list_trains
     system("clear")
@@ -213,5 +212,4 @@ class MenuTrains <  BaseMenu
     numbers_objects_list(array_objects)
     gets.to_i
   end
-
 end # class MenuTrains

@@ -1,10 +1,11 @@
 class Wagon
-  attr_reader :number
+  attr_reader :number, :type
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
+    @type = type
   end
 
   protected
-  attr_writer :number
+  attr_writer :number, :type
 end

@@ -1,18 +1,17 @@
 =begin
---- 5th task
    Создать модуль, который позволит указывать название компании-производителя и получать его.
    Подключить модуль к классам Вагон и Поезд
 =end
 
-class Wagon
-  include Manufacturer
-  attr_reader :number, :type
+module Manufacturer
 
-  def initialize(number, type)
-    @number = number
-    @type = type
+  def manufacturer_name(name)
+    self.name= name
+  end
+  def manufacturer_name?
+    self.name
   end
 
   protected
-  attr_writer :number, :type
+  attr_accessor :name
 end

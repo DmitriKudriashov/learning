@@ -10,11 +10,11 @@ require_relative 'instance_counter' # 5th task
 
 class Route
   include InstanceCounter # 5th task
-  attr_reader :stations
+  attr_reader :stations, :instanses
 
   def initialize(first, last)
     @stations = [first, last]
-    self.send :register_instance # 5th task
+    @instanses = self.register_instance # 5th task
   end
 
   def first_station

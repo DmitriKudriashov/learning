@@ -24,26 +24,18 @@
    и возвращает объект поезда по номеру или nil, если поезд с таким номером не найден.
 =end
 
-require_relative 'manufacturer.rb'      # не понятно где надо вставить эти объявления, чтобы только 1 раз их записать,
+require_relative 'manufacturer.rb'      # не понял я, где надо вставить эти объявления, чтобы только 1 раз их записать,
 require_relative 'instance_counter.rb'  # а если тут не написать, то будет ошибка
 
 class Train
   include Manufacturer, InstanceCounter
 
-  attr_reader :number, :speed, :route, :wagons, :type
-   # @@instanses = 0
-   @@trains =[] # 5th task
+  attr_reader :number, :speed, :route, :wagons, :type, :instances
 
-  # class << self
-  #   include InstanceCounter
-  #   def instanses
-  #     @@instanses
-  #   end
-  #  end
+  @@trains = {} # 5th task
 
   def self.find(number) # 5th task
-    indx = @@trains.map(&:number).index(number)
-    @@trains[indx] unless indx.nil?
+    @@trains[:number]
   end
 
   def initialize(number, type)
@@ -51,8 +43,8 @@ class Train
     @type = type
     @wagons = [] # массив вагонов-объектов # 4th task
     @speed = 0
-    @@trains << self # 5th task add new train into array trains of class
-    self.send :register_instance #, @@instanses
+    @@trains[:number] = self # 5th task: add new train into hash: {number => train,... }
+    @instances = self.register_instance
   end
 
   # Может принимать маршрут следования (объект класса Route).

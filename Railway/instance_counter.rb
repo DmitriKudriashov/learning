@@ -10,33 +10,24 @@
 =end
 
 module InstanceCounter
-  def self.included(current_class) # не очень понятно: а зачем тут вообще предусмотрен входящий параметр?
-                                   # интересно....где-то делается вызов этого метода с наперед заданным другим параметром, а не текущим классом,
-                                   # в котором это используется?
+  def self.included(current_class)
     current_class.extend ClassMethods
     current_class.send :include, InstanceMethods
   end
 
   module ClassMethods
-     @@instances = 0 #  не могу понять, где надо эту переменную класса объявлять..если здесь не вставить, то ClassMethods ее не знает..
+    attr_reader :instances
 
-    def instances_plus #(instances) пробовал парамером передавать ...тоже не то..
-       @@instances  += 1
+    def add_instance
+       @instances  = @instances.to_i + 1
     end
-
-    def instances
-      @@instances
-    end
-
   end
 
   module InstanceMethods
-
     protected
 
-    def register_instance #(instances) пробовал парамером передавать ...тоже не то..
-      self.class.send :instances_plus #, instances
-      # instances += 1
+    def register_instance
+      self.class.add_instance
     end
   end
 end

@@ -4,14 +4,5 @@
 =end
 
 module Manufacturer
-
-  def manufacturer_name(name)
-    self.name= name
-  end
-  def manufacturer_name?
-    self.name
-  end
-
-  protected
-  attr_accessor :name
+  attr_accessor :manufacturer_name
 end

@@ -13,8 +13,7 @@
 
 class Station
   include InstanceCounter # 5th task
-  attr_reader :name, :trains
-  # @@instanses = 0 так неудачно получается.
+  attr_reader :name, :trains, :instanses
   @@all_stations = [] # 5th task
 
   def self.all      # 5th task
@@ -25,7 +24,7 @@ class Station
     @name = station_name
     @trains = []
     @@all_stations << self # 5th task
-    self.send :register_instance #, @@instanses # 5th task  ----- с параметром плохо
+    @instanses = self.register_instance # # 5th task  ----- с параметром плохо
 end
 
   #  Может принимать поезда (по одному за раз)

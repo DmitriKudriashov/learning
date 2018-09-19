@@ -30,7 +30,7 @@ require_relative 'instance_counter.rb'  # а если тут не написат
 class Train
   include Manufacturer, InstanceCounter
 
-  attr_reader :number, :speed, :route, :wagons, :type, :instances
+  attr_reader :number, :speed, :route, :wagons, :type
 
   @@trains = {} # 5th task
 
@@ -44,7 +44,7 @@ class Train
     @wagons = [] # массив вагонов-объектов # 4th task
     @speed = 0
     @@trains[:number] = self # 5th task: add new train into hash: {number => train,... }
-    @instances = self.register_instance
+    self.register_instance
   end
 
   # Может принимать маршрут следования (объект класса Route).

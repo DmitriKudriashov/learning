@@ -14,7 +14,7 @@ class Route
 
   def initialize(first, last)
     @stations = [first, last]
-    self.register_instance # 5th task
+    register_instance # 5th task
   end
 
   def first_station

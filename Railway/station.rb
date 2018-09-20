@@ -24,7 +24,7 @@ class Station
     @name = station_name
     @trains = []
     @@all_stations << self # 5th task
-    self.register_instance # # 5th task  ----- с параметром плохо
+    register_instance # # 5th task  ----- с параметром плохо
 end
 
   #  Может принимать поезда (по одному за раз)

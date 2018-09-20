@@ -33,9 +33,8 @@ class Train
   attr_reader :number, :speed, :route, :wagons, :type
 
   @@trains = {} # 5th task
-
   def self.find(number) # 5th task
-    @@trains[:number]
+    @@trains[number]
   end
 
   def initialize(number, type)
@@ -43,8 +42,8 @@ class Train
     @type = type
     @wagons = [] # массив вагонов-объектов # 4th task
     @speed = 0
-    @@trains[:number] = self # 5th task: add new train into hash: {number => train,... }
-    self.register_instance
+    @@trains[number] = self # 5th task: add new train into hash: {number => train,... }
+    register_instance
   end
 
   # Может принимать маршрут следования (объект класса Route).

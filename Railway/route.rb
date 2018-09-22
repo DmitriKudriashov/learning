@@ -5,8 +5,12 @@
   Может добавлять промежуточную станцию в список
   Может удалять промежуточную станцию из списка
   Может выводить список всех станций по-порядку от начальной до конечной
+--- 6 task
+  Реализовать проверку (валидацию) данных для всех классов. Проверять основные атрибуты (название, номер, тип и т.п.) на наличие, длину и т.п.
+  (в зависимости от атрибута):
+        - Валидация должна вызываться при создании объекта, если объект невалидный, то должно выбрасываться исключение
+        - Должен быть метод valid? который возвращает true, если объект валидный и false - в противном случае.
 =end
-require_relative 'instance_counter' # 5th task
 
 class Route
   include InstanceCounter # 5th task
@@ -14,7 +18,15 @@ class Route
 
   def initialize(first, last)
     @stations = [first, last]
+    validate(first_station) # 6 task
+    validate(last_station)  # 6 task
     register_instance # 5th task
+  end
+
+  def valid?  # 6 task
+    validate(first_station) && validate(last_station)
+  rescue
+    false
   end
 
   def first_station
@@ -35,5 +47,13 @@ class Route
 
   def list_stations # Может выводить список всех станций по-порядку от начальной до конечной
     stations.each { |station|  puts "station: #{station.name}" } # случай когда маршрут из объектов
+  end
+
+  protected
+
+  def validate(station) # 6 task
+    raise "Name station can't be nil !" if station.nil?
+    raise "Name station can't be Empty !" if station.name.strip.empty?
+    true
   end
 end

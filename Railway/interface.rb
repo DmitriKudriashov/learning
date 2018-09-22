@@ -50,17 +50,17 @@ class Interface < BaseMenu
 
     @routes = [r1,r3,r2,r4]
    # ---------------- здесь  p - Passenger, c - Cargo, t - Train
-    pt1 = PassengerTrain.new("P100")
-    pt2 = PassengerTrain.new("P200")
-    pt3 = PassengerTrain.new("P300")
-    pt4 = PassengerTrain.new("P400")
-    pt5 = PassengerTrain.new("P500")
+    pt1 = PassengerTrain.new("P10-00")
+    pt2 = PassengerTrain.new("P20-00")
+    pt3 = PassengerTrain.new("P30-00")
+    pt4 = PassengerTrain.new("P40-00")
+    pt5 = PassengerTrain.new("P50-00")
 
-    ct1 = CargoTrain.new("C100")
-    ct2 = CargoTrain.new("C200")
-    ct3 = CargoTrain.new("C300")
-    ct4 = CargoTrain.new("C400")
-    ct5 = CargoTrain.new("C500")
+    ct1 = CargoTrain.new("C1000")
+    ct2 = CargoTrain.new("C2000")
+    ct3 = CargoTrain.new("C3000")
+    ct4 = CargoTrain.new("C4000")
+    ct5 = CargoTrain.new("C5000")
     @trains = [pt1,pt2,pt3,pt4,pt5,ct1,ct2,ct3,ct4,ct5]
 
     pt1.set_route(r1)

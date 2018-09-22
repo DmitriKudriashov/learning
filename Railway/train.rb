@@ -22,17 +22,24 @@
 
   В классе Train создать метод класса find, который принимает номер поезда (указанный при его создании)
    и возвращает объект поезда по номеру или nil, если поезд с таким номером не найден.
+--- 6 task
+  Реализовать проверку (валидацию) данных для всех классов. Проверять основные атрибуты (название, номер, тип и т.п.) на наличие, длину и т.п.
+  (в зависимости от атрибута):
+        - Валидация должна вызываться при создании объекта, если объект невалидный, то должно выбрасываться исключение
+        - Должен быть метод valid? который возвращает true, если объект валидный и false - в противном случае.
+  Релизовать проверку на формат номера поезда. Допустимый формат: три буквы или цифры в любом порядке, необязательный дефис (может быть, а может нет)
+    и еще 2 буквы или цифры после дефиса.
 =end
-
-require_relative 'manufacturer.rb'      # не понял я, где надо вставить эти объявления, чтобы только 1 раз их записать,
-require_relative 'instance_counter.rb'  # а если тут не написать, то будет ошибка
 
 class Train
   include Manufacturer, InstanceCounter
 
   attr_reader :number, :speed, :route, :wagons, :type
 
+  NUMBER_FORMAT = /^([\da-z]){3}-?\g<-1>{2}$/i  # Only English alphabet
+
   @@trains = {} # 5th task
+
   def self.find(number) # 5th task
     @@trains[number]
   end
@@ -43,7 +50,25 @@ class Train
     @wagons = [] # массив вагонов-объектов # 4th task
     @speed = 0
     @@trains[number] = self # 5th task: add new train into hash: {number => train,... }
-    register_instance
+    number_validate! #  6 task
+    type_validate!   #  6 task
+    register_instance # 5 task
+  end
+
+  def valid? # 6 task
+    number_valid? && type_valid?
+  end
+
+  def number_valid? # 6 task
+    number_validate!
+  rescue
+    false
+  end
+
+  def type_valid?  #  6 task
+    type_validate!
+  rescue
+    false
   end
 
   # Может принимать маршрут следования (объект класса Route).
@@ -95,6 +120,20 @@ class Train
 
   protected # здесь пока все методы, которые в настоящем проекте явно не требуются.. дальше по ходу будет видно что - куда...
   attr_writer :number, :speed, :route, :wagons # может пригодятся
+
+  def type_validate!   #  6 task
+    raise "Type can't be nil" if type.nil?
+    raise "Type should be at least 5 symbols" if type.length < 5 # я расчитываю на то, что тип поезд может быть у нас только грузовой или пассажирский..другие типы нам неизвестны.
+    true
+  end
+
+  def number_validate!   #  6 task
+    raise "Number can't be Nil !" if number.nil?
+    raise "Number can't be EMPTY !" if number.to_s.empty?
+    raise "Number should be at least 5 symbols" if 0 < number.strip.length && number.strip.length < 5
+    raise "Number has invalid format! ) \n The valid number must be of the form: XXX-XX or XXXXX \n   (where 'X' : 0-9 , a-z , A-Z ) " if number !~ NUMBER_FORMAT
+    true
+  end
 
   def change_speed(increment) # increment: если  положительный, скорость растет , increment: отрицательный скорость падает
     if @speed + increment > 0

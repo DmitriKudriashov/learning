@@ -105,20 +105,37 @@ class MenuTrains <  BaseMenu
     count_loop = 0
     loop do
       count_loop += 1
-      puts "#{count_loop}. Input Number for New #{type} Wagon : "
-      number_wagon = gets.chomp.upcase
-      break if number_wagon.strip.empty?
-      if type == "Cargo"
-        wagon = CargoWagon.new(number_wagon)
-      else
-        wagon = PassengerWagon.new(number_wagon)
-      end
+      wagon = new_wagon(count_loop, type)
+      break if wagon.nil?
       unless make_array_numbers(@wagons).include?(wagon.number)
+        puts "Add WAGON @wagons << wagon !"
         @wagons << wagon
+        gets
       else
         puts "This wagon: #{wagon.number} Already Exists! "
       end
     end
+  end
+
+  def new_wagon(count_loop, type)
+    wagon = nil # init wagon
+    loop do
+      puts "#{count_loop}. Input Number for New #{type} Wagon :\n ... or press <EnterKey> to RETURN ... "
+      number_wagon = gets.chomp.upcase
+      break if number_wagon.strip.empty?
+      begin
+        if type == "Cargo"
+          wagon = CargoWagon.new(number_wagon)
+        else
+          wagon = PassengerWagon.new(number_wagon)
+        end
+      rescue Exception => e
+        puts "Error: #{e.message}"
+        puts "Enter other number please...!) "
+      end
+      break unless wagon.nil? # exit? when new wagon created!
+    end # loop
+    wagon
   end
 
   def select_train_as_current # выберем один из поездов для дальнейших действий
@@ -138,14 +155,8 @@ class MenuTrains <  BaseMenu
     count_loop = 0
     loop do
       count_loop += 1
-      puts "#{count_loop}. Create New  #{type} Train #{message_return}"
-      number = gets.chomp.upcase
-      break if  number.strip.empty?
-      if type == "Cargo"
-        new_train = CargoTrain.new(number)
-      else
-        new_train = PassengerTrain.new(number)
-      end
+      new_train = train(count_loop, type)
+      break if new_train.nil?
       if make_array_numbers(@trains).include?(new_train.number)
         puts "The Train Number: #{number} Already Exists!"
       else
@@ -153,6 +164,27 @@ class MenuTrains <  BaseMenu
       end
     end # loop
   end
+
+  def train(count_loop, type)
+    new_train = nil # без этого программа сообщала (в последней строчке метода), что new_train не инициализирован..
+    loop do
+      puts "#{count_loop}. Create New  #{type} Train \n  ... or press <EnterKey> for RETURN ..."
+      number = gets.chomp.upcase
+      break if number.strip.empty?
+      begin
+        if type == "Cargo"
+          new_train = CargoTrain.new(number)
+        else
+          new_train = PassengerTrain.new(number)
+        end
+      rescue Exception => e
+        puts "Error: #{e.message}"
+        puts "Enter other number please...!) "
+      end # begin
+        break unless new_train.nil? # выйти, если поезд создан
+    end # loop
+    new_train
+  end # def train
 
   def list_trains
     system("clear")

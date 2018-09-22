@@ -8,8 +8,12 @@
   Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).
 --- 5th task
   В классе Station (жд станция) создать метод класса all, который возвращает все станции (объекты), созданные на данный момент
+--- 6 task
+Реализовать проверку (валидацию) данных для всех классов. Проверять основные атрибуты (название, номер, тип и т.п.) на наличие, длину и т.п.
+(в зависимости от атрибута):
+      - Валидация должна вызываться при создании объекта, если объект невалидный, то должно выбрасываться исключение
+      - Должен быть метод valid? который возвращает true, если объект валидный и false - в противном случае.
 =end
-# require_relative 'instance_counter' # 5th task
 
 class Station
   include InstanceCounter # 5th task
@@ -22,10 +26,15 @@ class Station
 
   def initialize(station_name)
     @name = station_name
+    name_validate!        # 6 task
     @trains = []
     @@all_stations << self # 5th task
-    register_instance # # 5th task  ----- с параметром плохо
-end
+    register_instance      # 5th task
+  end
+
+  def valid?
+    name_validate?
+  end
 
   #  Может принимать поезда (по одному за раз)
   def accept_train(train)
@@ -40,4 +49,15 @@ end
   def quantuty_trains_by_type(type)
     trains.count { |train| train.type == type }
   end
+
+  protected
+
+  def name_validate!   #  6 task
+    raise "Name station can't be nil !" if name.nil?
+    raise "Name station can't be Empty !" if name.strip.empty?
+    raise "Name station should be at least 3 symbols" if name.length < 2
+    true
+  end
+
 end
+

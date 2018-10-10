@@ -1,18 +1,18 @@
 #  Route
 class Route
   include InstanceCounter
-  include Validation
 
   attr_reader :stations, :station
 
   def initialize(first, last)
     @stations = [first, last]
-    validate!
+    validate_route!
     register_instance
   end
 
-  def valid?
-    validate!
+  def valid_route?
+    validate_route!
+    true
   rescue StandardError
     false
   end
@@ -41,12 +41,10 @@ class Route
 
   protected
 
-  def validate!
-    validate_one(first_station)
-    validate_one(last_station)
+  def validate_route!
+    raise "In this route first station invalid! " unless validate_one(first_station)
+    raise "In this route last station invalid! " unless validate_one(last_station)
     check_first_eql_last
-
-    true
   end
 
   def check_first_eql_last
@@ -56,16 +54,15 @@ class Route
   end
 
   def validate_one(station)
-    @station = station
-    validate :station, :type, Station
- end
-
-  def station_class_check(station)
-    mssg = "This object: #{station} - is not an instance of the Station class!"
-    raise mssg unless station.class.eql?(Station)
+    station.valid?
   end
 
-  def station_not_empty_check(station)
-    raise "Name station can't be Empty !" if station.name.strip.empty?
-  end
+  # def station_class_check(station)
+  #   mssg = "This object: #{station} - is not an instance of the Station class!"
+  #   raise mssg unless station.class.eql?(Station)
+  # end
+
+  # def station_not_empty_check(station)
+  #   raise "Name station can't be Empty !" if station.name.strip.empty?
+  # end
 end

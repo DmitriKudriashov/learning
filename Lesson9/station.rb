@@ -4,6 +4,9 @@ class Station
   include GlobalValues
   include Validation
 
+  validate :name, :presence
+  validate :name, :format, FORMAT_NAME_STATION
+
   attr_reader :name, :trains
 
   @@all_stations = []
@@ -16,7 +19,6 @@ class Station
     @trains = []
     @name = name
     validate!
-    # raise "Format name Station Invalid !" unless valid?
     @@all_stations << self
     register_instance
   end
@@ -25,11 +27,12 @@ class Station
     trains.each { |train| block.call(train) }
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
+  # def valid?
+  #   validate!
+  #   true
+  # rescue StandardError
+  #   false
+  # end
 
   def accept_train(train)
     @trains << train unless @trains.map(&:number).include?(train.number)
@@ -45,20 +48,18 @@ class Station
 
   protected
 
-  def validate!
-    # raise unless check_name_presence
-    # raise "Station validate! Format name Invalid! " unless check_name_format
-    check_name_presence
-    check_name_format
+  # def validate!
+  #   # check_name_presence
+  #   # check_name_format
+  #   self.class.validate :name, :presence
+  #   self.class.validate :name, :format, FORMAT_NAME_STATION
+  # end
 
-    true
-  end
+  # def check_name_presence
+  #   validate :name, :presence
+  # end
 
-  def check_name_presence
-    validate :name, :presence
-  end
-
-  def check_name_format
-   validate :name, :format, FORMAT_NAME_STATION
-  end
+  # def check_name_format
+  #  validate :name, :format, FORMAT_NAME_STATION
+  # end
 end

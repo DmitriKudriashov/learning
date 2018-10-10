@@ -28,48 +28,45 @@
 # Допустимо, что модуль не будет работать с наследниками.
 
 module Validation
+  def self.included(receiver)
+    receiver.extend ClassMethods
+    receiver.send :include, InstanceMethods
+  end
+
   module ClassMethods
-    #  этот метод сохраняет названия входящих пар-ров в переменных класса
+    #  этот метод сохраняет в массиве названия входящих пар-ров в переменных класса
     # типы входящих пар-ров: Symbol, Symbol, NilClass
-    def validate(validation_name, type_validation, type_argument)
-      @vldtn_name = validation_name
-      @type_vldtn = type_validation
-      @vldtn_argument = type_argument
+    def validate(validation_name, type_validation, type_argument = nil?)
+      # method_valid = {presence: 'presence_valid' , format: 'format_valid' , type: 'type_valid'}[type_validation] # упростить !
+      indx = [:presence, :format, :type].index(type_validation)
+      raise "This type: < #{type_validation} > of validation is not supported !" if indx.nil?
+      # method_valid = "#{type_validation}_valid" # так вроде неплохо бы  было сделать..
+      @checks ||= []
+      @checks << ["#{type_validation}_valid", validation_name, type_argument]
     end
   end
 
   module InstanceMethods
     attr_reader :value, :argument
 
-    # решил, что неплохо бы иметь инстанс такой метод..
-    def validate(validation_name, type_validation, type_argument = nil)
-      self.class.validate(validation_name, type_validation, type_argument)
-      included_validation!
-    end
-
-    def included_valid?
-      included_validation!
-    rescue StandardError => err
-      puts "Class Validation! ERROR: #{err.message}!" # для отладки.. потом надо убрать !
+    def valid?
+      validate!
+      true
+    rescue StandardError
       false
     end
 
     private
 
-    def select_method_validation
-      value_sym = self.class.instance_variable_get('@vldtn_name') # узнаем название проверяемой переменной, т.е. name, number, station..
-      @value = instance_variable_get("@#{value_sym}")   # узнаем  значение проверяемой переменной
-      @argument = self.class.instance_variable_get('@vldtn_argument')
-      type = self.class.instance_variable_get('@type_vldtn')
-      select_check = {presence: "presence_valid", format: "format_valid", type: "class_valid"}
-      select_check[type]
-    end
-
-    def included_validation!
-      method_check = select_method_validation
-      raise puts "Error: This type validation is missing!" if method_check.nil?
-      instance_eval(method_check)
-      true
+    def validate!
+      valds = self.class.instance_variable_get('@checks')
+      raise "Validations is nil !" if valds.nil?
+      valds.each do |check|
+        method_check = check[0].to_sym
+        @value = instance_variable_get("@#{check[1]}")
+        @argument = check[2]
+        send(method_check)
+      end
     end
 
     def presence_valid
@@ -77,16 +74,11 @@ module Validation
     end
 
     def format_valid
-      raise puts "Validation error! Invalid < #{value} > format!" if value.to_s !~ argument  #  value.to_s --> и числа проверять!
+      raise puts "Validation error! Invalid < #{value} > format!" if value.to_s !~ argument  #  value.to_s --> и числа проверять!method_check
     end
 
-    def class_valid
+    def type_valid
       raise puts "Validation error! Invalid type!" unless value.instance_of?(argument)
     end
-  end
-
-  def self.included(receiver)
-    receiver.extend ClassMethods
-    receiver.send :include, InstanceMethods
   end
 end

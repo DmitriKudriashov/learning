@@ -1,7 +1,6 @@
 #  Wagon
 class Wagon
   include Manufacturer
-  include GlobalValues
   include Validation
 
   attr_reader :number, :type, :amount, :busy, :unbusy
@@ -12,19 +11,20 @@ class Wagon
     @number = number
     @type = options[:type]
     @amount = options[:amount]
-    raise "Error Route new create!" unless valid? #validate!
+    validate!
     @busy = 0
     @unbusy = amount
   end
 
   def fill(qtty)
     @busy = busy + qtty
-    @busy = busy - qtty unless valid?
+    @busy = busy - qtty unless valid_instance?
     @unbusy = amount - busy
   end
 
-  def valid?
+  def valid_instance?
     validate!
+    true
   rescue StandardError
     false
   end
@@ -33,41 +33,37 @@ class Wagon
 
   attr_writer :number, :type, :speed, :route, :wagons
 
-  def validate!
-    check_number_presence
-    check_number_format
-    check_type_presence
-    check_amount_presence
-    check_amount_value
-    check_busy
+  # def validate!
+  #   check_number_presence
+  #   check_number_format
+  #   check_type_presence
+  #   check_amount_presence
+  #   check_amount_value
+  #   check_busy
+  # end
 
-    true
-  end
+  # def check_number_presence
+  #   self.class.validate :number, :presence
+  # end
 
-  def check_number_presence
-    validate :number, :presence
-  end
+  # def check_number_format
+  #   self.class.validate :number, :format, FORMAT_NUMBER_WAGON
+  # end
 
-  def check_number_format
-    validate :number, :format, FORMAT_NUMBER_WAGON
-  end
+  # def check_type_presence
+  #   self.class.validate :type, :presence
+  # end
 
-  def check_type_presence
-    validate :type, :presence
-  end
-
-  def check_type_format
-    validate :type, :format, FORMAT_TYPE
-  end
+  # def check_type_format
+  #   self.class.validate :type, :format, FORMAT_TYPE
+  # end
 
   def check_amount_presence
-    validate :amount, :presence
+    self.class.validate :amount, :presence
   end
 
   def check_amount_value
-    validate :amount, :format, /^[\d|.]/
-    # msg = "#{amount_name_by_type} = #{amount} must be greater than zero!"
-    # raise msg if amount <= 0
+    self.class.validate :amount, :format, /^[\d|.]/
   end
 
   def check_busy

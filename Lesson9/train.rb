@@ -2,7 +2,6 @@
 class Train
   include InstanceCounter
   include Manufacturer
-  include GlobalValues
   include Validation
 
   attr_reader :number, :speed, :route, :wagons, :type
@@ -27,11 +26,12 @@ class Train
     wagons.each { |wagon| block.call(wagon) }
   end
 
-  def valid?
-    validate!
-  rescue
-    false
-  end
+  # def valid?
+  #   validate!
+  #   true
+  # rescue
+  #   false
+  # end
 
   def assign_route(route)
     self.route = route
@@ -82,30 +82,28 @@ class Train
 
   attr_writer :number, :speed, :route, :wagons
 
-  def validate!
-    check_number_presence
-    check_number_format
-    check_type_presence
-    check_type_format
+  # def validate!
+  #   check_number_presence
+  #   check_number_format
+  #   check_type_presence
+  #   check_type_format
+  # end
 
-    true
-  end
+  # def check_number_presence
+  #   self.class.validate :number, :presence
+  # end
 
-  def check_number_presence
-    validate :number, :presence
-  end
+  # def check_number_format
+  #   self.class.validate :number, :format, FORMAT_NUMBER_TRAIN
+  # end
 
-  def check_number_format
-    validate :number, :format, FORMAT_NUMBER_TRAIN
-  end
+  # def check_type_presence
+  #   self.class.validate :type, :presence
+  # end
 
-  def check_type_presence
-    validate :type, :presence
-  end
-
-  def check_type_format
-    validate :type, :format, FORMAT_TYPE
-  end
+  # def check_type_format
+  #   self.class.validate :type, :format, FORMAT_TYPE
+  # end
 
   def change_speed(increment)
     if @speed + increment > 0

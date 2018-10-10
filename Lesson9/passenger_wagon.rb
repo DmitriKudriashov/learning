@@ -1,5 +1,12 @@
 #  Passenger Wagon
 class PassengerWagon < Wagon
+  include GlobalValues
+
+  validate :number, :presence
+  validate :number, :format, FORMAT_NUMBER_WAGON
+  validate :amount, :presence
+  validate :amount, :format, /^[\d|.]/
+
   def initialize(number, places)
     super(number, type: PASSENGER, amount: places)
   end

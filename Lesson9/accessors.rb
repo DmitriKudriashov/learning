@@ -24,13 +24,13 @@ module Accessors
       names.each do |name|
         name_sym = "@#{name}".to_sym
         name_history_sym = "@#{name}_history".to_sym
+        store = []
 
         define_method(name) { instance_variable_get(name_sym) }
         define_method("#{name}_history".to_sym) { instance_variable_get(name_history_sym) }
-
         define_method("#{name}=".to_sym) do |value|
-          instance_eval " #{name_history_sym} ||= []", __FILE__, __LINE__
-          instance_variable_get(name_history_sym) << value
+          x = instance_variable_get(name_sym)
+          instance_variable_set(name_history_sym, store.push(x)) unless x.nil?
           instance_variable_set(name_sym, value)
         end
       end
@@ -42,7 +42,7 @@ module Accessors
       define_method(attr_name) { instance_variable_get(attr_name_sym) }
       define_method("#{attr_name}=".to_sym) do |value|
         msg = "Different classes! Is required: #{attr_class} != #{value.class} of #{attr_name} "
-        raise  unless value.class.is_a? attr_class  #.eql? value.class
+        raise msg unless value.class.is_a? attr_class
 
         instance_variable_set(attr_name_sym, value)
       end

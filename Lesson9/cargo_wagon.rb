@@ -2,6 +2,11 @@
 class CargoWagon < Wagon
   include GlobalValues
 
+  validate :number, :presence
+  validate :number, :format, FORMAT_NUMBER_WAGON
+  validate :amount, :presence
+  validate :amount, :format, /^[\d|.]/
+
   def initialize(number, volume)
     super(number, type: CARGO, amount: volume)
   end

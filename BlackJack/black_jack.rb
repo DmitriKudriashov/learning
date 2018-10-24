@@ -4,10 +4,10 @@ class BlackJack
 
   def initialize
     @dealer = Gamer.new('Computer')
-    @interface = Interface.new(dealer)
   end
 
   def start
+    @interface = Interface.new
     dealer.new_game_init
     name_new = interface.ask_user_name
     @user = Gamer.new(name_new)
@@ -19,9 +19,9 @@ class BlackJack
   def game_run?
     loop do
       @number += 1
-      game = Game.new(user, dealer, number)
-      return false if !interface.accepted game
-      return true if interface.game_over?
+      game = Game.new(user, dealer, number, interface)
+      return false if !game.accepted
+      return true if game.game_over?
     end
     true
   end

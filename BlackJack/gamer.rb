@@ -2,24 +2,28 @@
 class Gamer
   include Accessors
   include Validation
-  include GlobalValues
 
-  attr_accessor_with_history :sum, :step, :bank, :status
-  attr_reader :name, :type, :cards, :game_number
+  validate :name, :presence
+  validate :name, :format, /^[A-Z]{3,}$/i
+  validate :balance, :negative
 
-  def initialize(options = {})
-    @name = options[:name]
-    @type = options[:type]
-    @cards = []
-    @game_number = 0
-    self.step = :hide
-    self.bank = 100
+  attr_reader_private_writer :sum, :step, :status, :status_text, :balance
+  attr_reader :name, :cards, :bank
+
+  BET = 10
+  BANK = 100
+
+  def initialize(name)
+    @name = name
+    @bank =  Bank.new(BANK)
+    @balance = @bank.balance
     validate!
   end
 
   def new_game_init
     @cards = []
     self.step = :hide
+    self.status = :none
   end
 
   # # for code debug only! reserved!
@@ -31,15 +35,16 @@ class Gamer
     amount = 0
     cards.each { |card| amount += card.cost }
     qtty_aces.times do
-       break if amount + 10 > 21
+      break if amount + 10 > 21
 
-       amount += 10
+      amount += 10
     end
     self.sum = amount
   end
 
   def qtty_aces
-    cards.map(&:cost).count(1)
+    # cards.map(&:cost).count(1)
+    cards.map(&:nominal).count('A')
   end
 
   def get_card(card)
@@ -50,22 +55,16 @@ class Gamer
 
   def bet
     self.step = :bet
-    change_bank(-10)
-    return 0 if self.step == :game_over
-    @game_number += 1
-    10
+    self.balance = bank.pay(BET) if valid?
+    BET
   end
 
   def bet_return
-    change_bank(10)
+    self.balance = bank.get(BET)
   end
 
   def change_bank(value)
-    if self.bank < -value
-      game_over
-    else
-      self.bank = self.bank + value
-    end
+    self.balance = bank.get(value) if valid?
   end
 
   def game_over
@@ -89,15 +88,18 @@ class Gamer
   end
 
   def win
-    self.status = 'YOU WIN ))'
+    self.status = :win
+    self.status_text = 'YOU WIN ))'
   end
 
   def loss
-    self.status = 'YOU LOSS (('
+    self.status = :loss
+    self.status_text = 'YOU LOSS (('
   end
 
   def fifty_fifty
-      self.status = 'VA-BANK !)'
+    self.status = :fifty_fifty
+    self.status_text = 'VA-BANK !)'
   end
 
   def try_on_21

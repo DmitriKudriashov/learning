@@ -8,7 +8,7 @@ module Validation
   module ClassMethods
     def validate(name, type, option = nil?)
       msg = "This type: < #{type} > of validation is not supported !"
-      raise msg unless [:presence, :format, :type].include?(type)
+      raise msg unless [:presence, :format, :type, :negative].include?(type)
       @checks ||= {}
       @checks[type] ||= []
       @checks[type] << {name: name, option: option}
@@ -28,8 +28,7 @@ module Validation
     # max-underthesun say me this algorithm
     def validate!
       valds = self.class.instance_variable_get('@checks')
-      # puts" def validate! ====>>> valds=#{valds}"
-      [:presence, :format, :type].each do |type|
+      [:presence, :format, :type, :negative].each do |type|
         method_check = "#{type}_valid"
         unless valds[type].nil?
           valds[type].each do |check|
@@ -38,6 +37,10 @@ module Validation
           end
         end
       end
+    end
+
+    def negative_valid(value, argument)
+      raise puts "\nValidation error! Negative value = #{value.to_f} !" if value.to_f < 0
     end
 
     def presence_valid(value, argument)

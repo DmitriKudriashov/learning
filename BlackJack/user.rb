@@ -1,12 +1,11 @@
 # user.rb
 class User < Gamer
- include GlobalValues
 
   validate :name, :presence
-  validate :name, :format, NAME_FORMAT
+  validate :name, :format, /^[A-Z]{3,}$/i
 
-  def initialize(options = {})
-    super(name: options[:name], type: USER)
+  def initialize(name)
+    super(name,'User')
   end
 
   # not using . reserved!

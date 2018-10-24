@@ -1,31 +1,32 @@
 # balack_jack.rb
 class BlackJack
-  include CommonMethods
+  attr_reader :user, :dealer, :number, :interface
+
+  def initialize
+    @dealer = Gamer.new('Computer')
+    @interface = Interface.new(dealer)
+  end
 
   def start
-    system('clear')
-    puts 'INPUT YOU NAME:'
-    name_user = gets_whith_esc #
-    name_user = name_user.chomp.strip.capitalize
-    exit if name_user.strip.empty?
+    dealer.new_game_init
+    name_new = interface.ask_user_name
+    @user = Gamer.new(name_new)
+    user.new_game_init
+    @number = 0
+    balance_gamer if game_run?
+  end
 
-    @user = User.new(name: name_user)
-    @dealer = Dealer.new(name: 'Computer')
-
+  def game_run?
     loop do
-      game = Game.new(@user, @dealer)
-      begin
-        raise "GAME OVER !" if game.bets < 20
-      rescue StandardError => err
-        puts "\nFor #{balance_gamer} \n #{err.message}"
-        exit
-      end
-      game.run
-      break if game.new_or_close
+      @number += 1
+      game = Game.new(user, dealer, number)
+      return false if !interface.accepted game
+      return true if interface.game_over?
     end
+    true
   end
 
   def balance_gamer
-    @user.bank < 10 ? "#{@user.name} Bank sum: #{@user.bank}" :  "#{@dealer.name} Bank sum: #{@dealer.bank}"
+    user.balance < Gamer::BET ? "#{user.name} Bank sum: #{user.balance}" :  "#{dealer.name} Bank sum: #{dealer.balance}"
   end
 end

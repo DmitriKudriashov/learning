@@ -2,25 +2,25 @@
 class Card
   include Accessors
 
-  attr_accessor_with_history :cost, :nominal, :suit, :name, :lookup
+  attr_reader :nominal, :suit, :cost, :name, :lookup
 
   def initialize(nominal, suit, cost)
     @nominal = nominal
     @suit = suit
     @cost = cost
     @name = nominal + suit
-    hide!
+    @lookup = false
   end
 
   def open!
     self.lookup = true
   end
 
-  def hide!
-    self.lookup = false
+  def open?
+    lookup
   end
 
-  def open?
-    self.lookup
-  end
+  private
+
+  attr_writer :lookup
 end

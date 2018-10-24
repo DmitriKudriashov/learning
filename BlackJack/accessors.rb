@@ -13,7 +13,6 @@ module Accessors
         name_history_sym = "@#{name}_history".to_sym
         define_method(name) { instance_variable_get(name_sym) }
         define_method("#{name}_history".to_sym) { instance_variable_get(name_history_sym) }
-        name_setter = "#{name}=".to_sym
         define_method("#{name}=".to_sym) do |value|
           x = instance_variable_get(name_sym)
           history = instance_variable_get(name_history_sym) || []
@@ -21,6 +20,15 @@ module Accessors
           instance_variable_set(name_sym, value)
         end
         private "#{name}=".to_sym # для теста надо закомментировать, для проекта не надо
+      end
+    end
+
+    def attr_reader_private_writer(*names)
+      names.each do |name|
+        name_sym = "@#{name}".to_sym
+        define_method(name) { instance_variable_get(name_sym) }
+        define_method("#{name}=".to_sym) { |value| instance_variable_set(name_sym, value) }
+        private "#{name}=".to_sym
       end
     end
 

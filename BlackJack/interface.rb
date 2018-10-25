@@ -2,15 +2,11 @@
 require 'io/console'
 
 class Interface
-  # include Accessors
-  # attr_reader_private_writer :game, :user, :user_select, :dealer, :dealer_select
-
   def ask_user_name
     system('clear')
     puts 'INPUT YOU NAME:'
     gets_whith_esc.chomp.strip.capitalize
   end
-
 
   def game_number(number, stake)
     system('clear')
@@ -41,43 +37,43 @@ class Interface
 
   def menu_view_head
     devider_simple
-    puts "       Select Action  ( <ESC> - Return )"
+    puts '       Select Action  ( <ESC> - Return )'
     devider_simple
   end
 
   def select_from(menu)
-     menu.each_with_index { |text, item| puts "#{item + 1}. #{text}" }
+    menu.each_with_index { |text, item| puts "#{item + 1}. #{text}" }
   end
 
-
-  def start_accepted?
+  def start_accepted
     loop do
       puts "\n #{'=' * 50}
         Start new game?
      (Y)es  /  (ESC) for Exit "
       char = STDIN.getch
       return false if char.ord == 27
-      return true if char.chomp.upcase == "Y"
+      return true if char.chomp.casecmp('Y').zero?
     end
   end
 
-  def message_ballance
-    puts "\nFor User Balance: #{balance}! \n #{err.message}"
+  def message_ballance(name, balance, err)
+    puts "\nFor #{name} Balance: #{balance}! \n #{err.message}"
   end
 
   def msg_game_over
-     "GAME OVER !"
+    'GAME OVER !'
   end
 
   def gets_whith_esc
     name = ''
     char = ''
-    while 1 do
+    loop do
       char = STDIN.getch
-      return ''  if char.ord == 27
+      return '' if char.ord == 27
       return name if char.ord == 13
+
       print char
-      name = name + char
+      name += char
     end
   end
 end

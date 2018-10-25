@@ -1,27 +1,24 @@
 # gamer.rb
 class Gamer
-  include Accessors
   include Validation
 
   validate :name, :presence
   validate :name, :format, /^[A-Z]{3,}$/i
   validate :balance, :negative
 
-  attr_reader_private_writer :sum, :step, :status, :status_text, :balance
-  attr_reader :name, :cards, :bank
-
-  BET = 10
-  BANK = 100
+  attr_reader :name, :cards, :bank, :sum, :step, :status, :status_text, :balance
 
   def initialize(name)
     @name = name
-    @bank =  Bank.new(BANK)
+    @bank =  Bank.new
     @balance = @bank.balance
     validate!
   end
 
   def new_game_init
     @cards = []
+    # @hand = Hand.new
+
     self.step = :hide
     self.status = :none
   end
@@ -32,19 +29,13 @@ class Gamer
   # end
 
   def calc_sum
-    amount = 0
-    cards.each { |card| amount += card.cost }
-    qtty_aces.times do
-      break if amount + 10 > 21
+    self.sum = 0
+    cards.each { |card| self.sum += card.cost }
+    cards.map(&:cost).count(1).times do
+      break if self.sum + 10 > 21
 
-      amount += 10
+      self.sum += 10
     end
-    self.sum = amount
-  end
-
-  def qtty_aces
-    # cards.map(&:cost).count(1)
-    cards.map(&:nominal).count('A')
   end
 
   def get_card(card)
@@ -55,20 +46,16 @@ class Gamer
 
   def bet
     self.step = :bet
-    self.balance = bank.pay(BET) if valid?
-    BET
+    self.balance = bank.pay(Bank::BET) if valid?
+    Bank::BET
   end
 
   def bet_return
-    self.balance = bank.get(BET)
+    self.balance = bank.get(Bank::BET)
   end
 
   def change_bank(value)
     self.balance = bank.get(value) if valid?
-  end
-
-  def game_over
-    self.step = :game_over
   end
 
   def pass
@@ -84,7 +71,7 @@ class Gamer
   end
 
   def lookup?
-    self.step == :lookup ? true : false
+    step == :lookup
   end
 
   def win
@@ -115,12 +102,15 @@ class Gamer
 
   def cards_list
     list = ''
-    cards.each { |card|  list += image(card) }
+    cards.each { |card| list += image(card) }
     list
   end
 
   def image(card)
-     card.open? || step == :lookup ? "|#{ card.name }| " : "| * | "
+    card.open? || step == :lookup ? "|#{card.name}| " : '| * | '
   end
-end
 
+  private
+
+  attr_writer :sum, :step, :status, :status_text, :balance
+end

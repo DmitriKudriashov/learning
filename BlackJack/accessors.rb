@@ -1,12 +1,11 @@
 # accessors.rb
 module Accessors
   def self.included(receiver)
-    receiver.extend  ClassMethods
+    receiver.extend ClassMethods
     # receiver.send :include, InstanceMethods
   end
 
   module ClassMethods
-
     def attr_accessor_with_history(*names)
       names.each do |name|
         name_sym = "@#{name}".to_sym

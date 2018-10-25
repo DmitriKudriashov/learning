@@ -10,6 +10,5 @@ require_relative 'logistics'
 require_relative 'game'
 require_relative 'black_jack'
 
-
 new_game = BlackJack.new
 new_game.start

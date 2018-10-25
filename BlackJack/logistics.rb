@@ -1,16 +1,15 @@
 # logistics.rb
 module Logistics
-
   def user_loss
     user.loss
     dealer.win
-    dealer.change_bank(self.game_bank)
+    dealer.change_bank(game_bank)
     self.game_bank = 0
   end
 
   def user_win
     user.win
-    user.change_bank(self.game_bank)
+    user.change_bank(game_bank)
     dealer.loss
     self.game_bank = 0
   end
@@ -23,26 +22,19 @@ module Logistics
     self.game_bank = 0
   end
 
-  def lookup
-   user.lookup
-   dealer.lookup
-   true
-  end
-
   def open_cards
-    lookup
+    user.lookup
+    dealer.lookup
     check_sums
-    true
   end
 
   def user_pass
     user.pass
     dealer_next_step
-    false
   end
 
   def user_get_card
-    new_card = deck.give_out
+    new_card = deck.give_out # deck.give_a  #  for debug sum Aces only
     new_card.open!
     user.get_card new_card
   end
@@ -54,7 +46,7 @@ module Logistics
   def next_card
     user_get_card
     dealer_next_step if dealer.cards.size < 3
-    false
+    # false
   end
 
   def dealer_next_step
@@ -85,11 +77,12 @@ module Logistics
   end
 
   def game_over?
-    raise interface.msg_game_over if user.balance < Gamer::BET || dealer.balance < Gamer::BET
+    raise interface.msg_game_over if user.balance < Bank::BET || dealer.balance < Bank::BET
+
     false
   rescue StandardError => err
-    interface.message_ballance(user.balance,err) if user.balance < Gamer::BET
-    interface.message_ballance(dealer.balance,err) if dealer.balance < Gamer::BET
+    interface.message_ballance(user.name, user.balance, err) if user.balance < Bank::BET
+    interface.message_ballance(dealer.name, dealer.balance, err) if dealer.balance < Bank::BET
     true
   end
 end

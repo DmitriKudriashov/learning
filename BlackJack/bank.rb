@@ -4,10 +4,13 @@ class Bank
 
   validate :balance, :negative
 
+  BET = 10
+  BANK = 100
+
   attr_reader :balance
 
-  def initialize(sum)
-    @balance = sum
+  def initialize
+    @balance = BANK
     validate!
   end
 
@@ -19,4 +22,3 @@ class Bank
     @balance += money
   end
 end
-
